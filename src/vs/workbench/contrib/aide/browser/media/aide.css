@@ -1,19 +1,39 @@
 /*---------------------------------------------------------------------------------------------
- *  AIDE - Modern AI Interface
- *  Clean. Fast. Powerful.
+ *  AIDE - THE BATCOMPUTER
+ *  "It's not who I am underneath, but what I do that defines me."
  *--------------------------------------------------------------------------------------------*/
 
 /* ============================================================================
-   Root & Wrapper
+   Root & Wrapper - The Batcave
    ============================================================================ */
 
 .aide-root {
 	height: 100%;
-	background: #0d0d0d;
-	color: #e5e5e5;
-	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-	font-size: 14px;
+	background: #000000;
+	color: #e0e0e0;
+	font-family: 'SF Mono', 'Consolas', 'Monaco', monospace;
+	font-size: 13px;
 	overflow: hidden;
+	position: relative;
+}
+
+/* Scan line overlay */
+.aide-root::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: repeating-linear-gradient(
+		0deg,
+		transparent,
+		transparent 2px,
+		rgba(0, 255, 255, 0.03) 2px,
+		rgba(0, 255, 255, 0.03) 4px
+	);
+	pointer-events: none;
+	z-index: 1000;
 }
 
 .aide-wrapper {
@@ -21,10 +41,11 @@
 	flex-direction: column;
 	height: 100%;
 	max-width: 100%;
+	position: relative;
 }
 
 /* ============================================================================
-   Welcome Screen
+   Welcome Screen - System Initialization
    ============================================================================ */
 
 .aide-welcome {
@@ -35,96 +56,155 @@
 	justify-content: center;
 	padding: 32px 24px;
 	text-align: center;
+	background: radial-gradient(ellipse at center, rgba(0, 255, 255, 0.05) 0%, transparent 70%);
 }
 
 .aide-logo {
-	margin-bottom: 24px;
+	margin-bottom: 32px;
+	position: relative;
 }
 
 .aide-logo-icon {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	width: 56px;
-	height: 56px;
-	background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
-	border-radius: 16px;
-	font-size: 24px;
-	color: white;
-	box-shadow: 0 8px 32px rgba(99, 102, 241, 0.4);
+	width: 80px;
+	height: 80px;
+	background: transparent;
+	border: 2px solid #00ffff;
+	border-radius: 8px;
+	font-size: 36px;
+	color: #00ffff;
+	box-shadow:
+		0 0 20px rgba(0, 255, 255, 0.5),
+		0 0 40px rgba(0, 255, 255, 0.3),
+		0 0 60px rgba(0, 255, 255, 0.1),
+		inset 0 0 20px rgba(0, 255, 255, 0.1);
+	animation: pulse-glow 3s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+	0%, 100% {
+		box-shadow:
+			0 0 20px rgba(0, 255, 255, 0.5),
+			0 0 40px rgba(0, 255, 255, 0.3),
+			0 0 60px rgba(0, 255, 255, 0.1),
+			inset 0 0 20px rgba(0, 255, 255, 0.1);
+	}
+	50% {
+		box-shadow:
+			0 0 30px rgba(0, 255, 255, 0.7),
+			0 0 60px rgba(0, 255, 255, 0.4),
+			0 0 90px rgba(0, 255, 255, 0.2),
+			inset 0 0 30px rgba(0, 255, 255, 0.2);
+	}
 }
 
 .aide-title {
-	font-size: 20px;
+	font-size: 14px;
 	font-weight: 600;
-	color: #ffffff;
+	color: #00ffff;
 	margin-bottom: 8px;
+	text-transform: uppercase;
+	letter-spacing: 4px;
+	text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
 }
 
 .aide-subtitle {
-	font-size: 14px;
-	color: #737373;
+	font-size: 12px;
+	color: #666666;
 	max-width: 280px;
-	line-height: 1.5;
-	margin-bottom: 32px;
+	line-height: 1.6;
+	margin-bottom: 40px;
+	text-transform: uppercase;
+	letter-spacing: 1px;
 }
 
-/* Quick Actions */
+/* Quick Actions - Tactical Options */
 .aide-quick-actions {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
-	gap: 8px;
+	gap: 12px;
 	width: 100%;
-	max-width: 320px;
+	max-width: 340px;
 }
 
 .aide-suggestion {
 	display: flex;
 	align-items: center;
-	gap: 8px;
-	padding: 12px 14px;
-	background: #1a1a1a;
-	border: 1px solid #262626;
-	border-radius: 10px;
+	gap: 12px;
+	padding: 14px 16px;
+	background: rgba(0, 255, 255, 0.03);
+	border: 1px solid rgba(0, 255, 255, 0.2);
+	border-radius: 4px;
 	cursor: pointer;
-	transition: all 0.15s ease;
+	transition: all 0.2s ease;
+	position: relative;
+	overflow: hidden;
+}
+
+.aide-suggestion::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: -100%;
+	width: 100%;
+	height: 100%;
+	background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.1), transparent);
+	transition: left 0.5s ease;
+}
+
+.aide-suggestion:hover::before {
+	left: 100%;
 }
 
 .aide-suggestion:hover {
-	background: #262626;
-	border-color: #404040;
-	transform: translateY(-1px);
+	background: rgba(0, 255, 255, 0.08);
+	border-color: #00ffff;
+	box-shadow:
+		0 0 15px rgba(0, 255, 255, 0.3),
+		inset 0 0 15px rgba(0, 255, 255, 0.05);
+	transform: translateY(-2px);
 }
 
 .aide-suggestion .icon {
-	font-size: 16px;
+	font-size: 18px;
+	filter: grayscale(1) brightness(1.5);
+}
+
+.aide-suggestion:hover .icon {
+	filter: grayscale(0);
 }
 
 .aide-suggestion .text {
-	font-size: 13px;
-	color: #a3a3a3;
+	font-size: 11px;
+	color: #888888;
+	text-transform: uppercase;
+	letter-spacing: 1px;
 }
 
 .aide-suggestion:hover .text {
-	color: #e5e5e5;
+	color: #00ffff;
+	text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
 }
 
 /* ============================================================================
-   Messages Area
+   Messages Area - Intel Feed
    ============================================================================ */
 
 .aide-messages {
 	flex: 1;
 	display: flex;
 	flex-direction: column;
-	gap: 16px;
-	padding: 20px;
+	gap: 20px;
+	padding: 24px;
 	overflow-y: auto;
 	overflow-x: hidden;
+	background: linear-gradient(180deg, rgba(0, 255, 255, 0.02) 0%, transparent 100%);
 }
 
 .aide-messages::-webkit-scrollbar {
-	width: 6px;
+	width: 4px;
 }
 
 .aide-messages::-webkit-scrollbar-track {
@@ -132,21 +212,31 @@
 }
 
 .aide-messages::-webkit-scrollbar-thumb {
-	background: #333;
-	border-radius: 3px;
+	background: rgba(0, 255, 255, 0.3);
+	border-radius: 2px;
+}
+
+.aide-messages::-webkit-scrollbar-thumb:hover {
+	background: rgba(0, 255, 255, 0.5);
 }
 
 /* Message Bubbles */
 .aide-bubble {
 	display: flex;
-	gap: 12px;
+	gap: 16px;
 	max-width: 100%;
-	animation: fadeIn 0.2s ease;
+	animation: message-in 0.3s ease;
 }
 
-@keyframes fadeIn {
-	from { opacity: 0; transform: translateY(8px); }
-	to { opacity: 1; transform: translateY(0); }
+@keyframes message-in {
+	from {
+		opacity: 0;
+		transform: translateY(10px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
 }
 
 .aide-bubble.user {
@@ -154,68 +244,76 @@
 }
 
 .aide-bubble.user .aide-content {
-	background: #2563eb;
-	color: white;
-	border-radius: 16px 16px 4px 16px;
+	background: linear-gradient(135deg, #00ffff 0%, #00cccc 100%);
+	color: #000000;
+	border: none;
+	border-radius: 4px 4px 0 4px;
+	font-weight: 500;
 }
 
 .aide-bubble.assistant .aide-content {
-	background: #1a1a1a;
-	border: 1px solid #262626;
-	border-radius: 16px 16px 16px 4px;
+	background: rgba(0, 255, 255, 0.05);
+	border: 1px solid rgba(0, 255, 255, 0.2);
+	border-radius: 4px 4px 4px 0;
+	border-left: 3px solid #00ffff;
 }
 
 .aide-avatar {
 	flex-shrink: 0;
-	width: 32px;
-	height: 32px;
+	width: 36px;
+	height: 36px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	background: linear-gradient(135deg, #6366f1, #8b5cf6);
-	border-radius: 10px;
-	font-size: 14px;
-	color: white;
+	background: transparent;
+	border: 1px solid #00ffff;
+	border-radius: 4px;
+	font-size: 16px;
+	color: #00ffff;
+	box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
 }
 
 .aide-content {
-	padding: 12px 16px;
-	line-height: 1.6;
+	padding: 16px 20px;
+	line-height: 1.7;
 	white-space: pre-wrap;
 	word-wrap: break-word;
+	font-size: 13px;
 }
 
 .aide-content.streaming::after {
-	content: '▋';
+	content: '█';
 	display: inline;
-	animation: blink 0.7s infinite;
-	color: #6366f1;
+	animation: cursor-blink 0.8s infinite;
+	color: #00ffff;
+	text-shadow: 0 0 5px #00ffff;
 }
 
-@keyframes blink {
+@keyframes cursor-blink {
 	0%, 50% { opacity: 1; }
 	51%, 100% { opacity: 0; }
 }
 
 /* ============================================================================
-   Input Area
+   Input Area - Command Interface
    ============================================================================ */
 
 .aide-input-area {
 	flex-shrink: 0;
-	padding: 16px 20px 20px;
-	background: #0d0d0d;
-	border-top: 1px solid #1a1a1a;
+	padding: 20px 24px 24px;
+	background: linear-gradient(180deg, transparent 0%, rgba(0, 255, 255, 0.03) 100%);
+	border-top: 1px solid rgba(0, 255, 255, 0.15);
 }
 
-/* Mode Tabs */
+/* Mode Tabs - Operation Modes */
 .aide-mode-tabs {
 	display: flex;
-	gap: 4px;
-	margin-bottom: 12px;
-	padding: 4px;
-	background: #1a1a1a;
-	border-radius: 10px;
+	gap: 2px;
+	margin-bottom: 16px;
+	padding: 2px;
+	background: rgba(0, 255, 255, 0.05);
+	border: 1px solid rgba(0, 255, 255, 0.1);
+	border-radius: 4px;
 }
 
 .aide-mode-tab {
@@ -223,26 +321,33 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	gap: 6px;
-	padding: 8px 12px;
+	gap: 8px;
+	padding: 10px 16px;
 	background: transparent;
 	border: none;
-	border-radius: 8px;
-	color: #737373;
-	font-size: 13px;
-	font-weight: 500;
+	border-radius: 3px;
+	color: #555555;
+	font-family: inherit;
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 1px;
 	cursor: pointer;
-	transition: all 0.15s ease;
+	transition: all 0.2s ease;
 }
 
 .aide-mode-tab:hover {
-	color: #a3a3a3;
+	color: #888888;
+	background: rgba(0, 255, 255, 0.05);
 }
 
 .aide-mode-tab.active {
-	background: #262626;
-	color: #ffffff;
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+	background: rgba(0, 255, 255, 0.1);
+	color: #00ffff;
+	box-shadow:
+		0 0 10px rgba(0, 255, 255, 0.2),
+		inset 0 0 10px rgba(0, 255, 255, 0.05);
+	text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
 }
 
 .aide-mode-tab .icon {
@@ -250,24 +355,26 @@
 }
 
 .aide-mode-tab .label {
-	font-size: 12px;
+	font-size: 10px;
 }
 
 /* Input Container */
 .aide-input-container {
 	display: flex;
 	align-items: flex-end;
-	gap: 8px;
-	padding: 12px;
-	background: #1a1a1a;
-	border: 1px solid #262626;
-	border-radius: 14px;
-	transition: all 0.15s ease;
+	gap: 12px;
+	padding: 16px;
+	background: rgba(0, 0, 0, 0.5);
+	border: 1px solid rgba(0, 255, 255, 0.2);
+	border-radius: 4px;
+	transition: all 0.2s ease;
 }
 
 .aide-input-container:focus-within {
-	border-color: #6366f1;
-	box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+	border-color: #00ffff;
+	box-shadow:
+		0 0 20px rgba(0, 255, 255, 0.2),
+		inset 0 0 20px rgba(0, 255, 255, 0.03);
 }
 
 /* Context Button */
@@ -276,24 +383,24 @@
 }
 
 .aide-ctx-btn {
-	width: 32px;
-	height: 32px;
+	width: 36px;
+	height: 36px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	background: #262626;
-	border: none;
-	border-radius: 8px;
-	color: #737373;
-	font-size: 14px;
-	font-weight: 600;
+	background: transparent;
+	border: 1px solid rgba(0, 255, 255, 0.3);
+	border-radius: 4px;
+	color: #00ffff;
+	font-size: 16px;
+	font-weight: 700;
 	cursor: pointer;
-	transition: all 0.15s ease;
+	transition: all 0.2s ease;
 }
 
 .aide-ctx-btn:hover {
-	background: #333;
-	color: #a3a3a3;
+	background: rgba(0, 255, 255, 0.1);
+	box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
 }
 
 /* Textarea */
@@ -301,11 +408,11 @@
 	flex: 1;
 	min-height: 24px;
 	max-height: 200px;
-	padding: 4px 0;
+	padding: 8px 0;
 	background: transparent;
 	border: none;
 	outline: none;
-	color: #e5e5e5;
+	color: #e0e0e0;
 	font-family: inherit;
 	font-size: 14px;
 	line-height: 1.5;
@@ -313,28 +420,37 @@
 }
 
 .aide-textarea::placeholder {
-	color: #525252;
+	color: #444444;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	font-size: 12px;
 }
 
-/* Send Button */
+/* Send Button - Execute */
 .aide-send-btn {
-	width: 36px;
-	height: 36px;
+	width: 44px;
+	height: 44px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	background: linear-gradient(135deg, #6366f1, #8b5cf6);
+	background: #00ffff;
 	border: none;
-	border-radius: 10px;
-	color: white;
-	font-size: 18px;
+	border-radius: 4px;
+	color: #000000;
+	font-size: 20px;
+	font-weight: 700;
 	cursor: pointer;
-	transition: all 0.15s ease;
+	transition: all 0.2s ease;
+	box-shadow:
+		0 0 20px rgba(0, 255, 255, 0.4),
+		0 0 40px rgba(0, 255, 255, 0.2);
 }
 
 .aide-send-btn:hover {
 	transform: scale(1.05);
-	box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4);
+	box-shadow:
+		0 0 30px rgba(0, 255, 255, 0.6),
+		0 0 60px rgba(0, 255, 255, 0.3);
 }
 
 .aide-send-btn:active {
@@ -343,26 +459,30 @@
 
 /* Footer */
 .aide-footer {
-	margin-top: 8px;
+	margin-top: 12px;
 	text-align: center;
-	font-size: 11px;
-	color: #525252;
+	font-size: 10px;
+	color: #333333;
+	text-transform: uppercase;
+	letter-spacing: 2px;
 }
 
 /* ============================================================================
-   Mentions Dropdown
+   Mentions Dropdown - Target Acquisition
    ============================================================================ */
 
 .aide-mentions {
 	position: absolute;
-	bottom: 160px;
-	left: 20px;
-	right: 20px;
-	max-height: 280px;
-	background: #1a1a1a;
-	border: 1px solid #333;
-	border-radius: 12px;
-	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+	bottom: 180px;
+	left: 24px;
+	right: 24px;
+	max-height: 300px;
+	background: rgba(0, 0, 0, 0.95);
+	border: 1px solid rgba(0, 255, 255, 0.3);
+	border-radius: 4px;
+	box-shadow:
+		0 0 30px rgba(0, 255, 255, 0.2),
+		0 0 60px rgba(0, 0, 0, 0.8);
 	overflow: hidden;
 	z-index: 100;
 }
@@ -370,15 +490,17 @@
 .aide-mention-row {
 	display: flex;
 	align-items: center;
-	gap: 12px;
-	padding: 12px 16px;
+	gap: 16px;
+	padding: 14px 20px;
 	cursor: pointer;
-	transition: background 0.1s ease;
+	transition: all 0.15s ease;
+	border-left: 3px solid transparent;
 }
 
 .aide-mention-row:hover,
 .aide-mention-row.selected {
-	background: #262626;
+	background: rgba(0, 255, 255, 0.1);
+	border-left-color: #00ffff;
 }
 
 .aide-mention-row .icon {
@@ -387,14 +509,17 @@
 
 .aide-mention-row .label {
 	font-weight: 600;
-	color: #6366f1;
-	font-family: 'SF Mono', Consolas, monospace;
+	color: #00ffff;
+	font-size: 13px;
+	text-shadow: 0 0 5px rgba(0, 255, 255, 0.3);
 }
 
 .aide-mention-row .desc {
 	margin-left: auto;
-	font-size: 12px;
-	color: #525252;
+	font-size: 11px;
+	color: #444444;
+	text-transform: uppercase;
+	letter-spacing: 1px;
 }
 
 /* ============================================================================
@@ -406,107 +531,29 @@
 	height: 100%;
 }
 
-/* Hide the default VS Code pane header since we have our own UI */
 .auxiliary-bar .pane-header {
 	display: none !important;
 }
 
 /* ============================================================================
-   Light Theme
+   Status Indicators
    ============================================================================ */
 
-.vs .aide-root {
-	background: #ffffff;
-	color: #171717;
+@keyframes status-pulse {
+	0%, 100% { opacity: 0.5; }
+	50% { opacity: 1; }
 }
 
-.vs .aide-logo-icon {
-	box-shadow: 0 8px 32px rgba(99, 102, 241, 0.2);
-}
-
-.vs .aide-subtitle {
-	color: #737373;
-}
-
-.vs .aide-suggestion {
-	background: #fafafa;
-	border-color: #e5e5e5;
-}
-
-.vs .aide-suggestion:hover {
-	background: #f5f5f5;
-	border-color: #d4d4d4;
-}
-
-.vs .aide-suggestion .text {
-	color: #525252;
-}
-
-.vs .aide-messages {
-	background: #ffffff;
-}
-
-.vs .aide-bubble.assistant .aide-content {
-	background: #f5f5f5;
-	border-color: #e5e5e5;
-}
-
-.vs .aide-input-area {
-	background: #ffffff;
-	border-top-color: #e5e5e5;
-}
-
-.vs .aide-mode-tabs {
-	background: #f5f5f5;
-}
-
-.vs .aide-mode-tab {
-	color: #737373;
-}
-
-.vs .aide-mode-tab.active {
-	background: #ffffff;
-	color: #171717;
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-
-.vs .aide-input-container {
-	background: #fafafa;
-	border-color: #e5e5e5;
-}
-
-.vs .aide-input-container:focus-within {
-	border-color: #6366f1;
-}
-
-.vs .aide-ctx-btn {
-	background: #e5e5e5;
-	color: #525252;
-}
-
-.vs .aide-ctx-btn:hover {
-	background: #d4d4d4;
-}
-
-.vs .aide-textarea {
-	color: #171717;
-}
-
-.vs .aide-textarea::placeholder {
-	color: #a3a3a3;
-}
-
-.vs .aide-mentions {
-	background: #ffffff;
-	border-color: #e5e5e5;
-	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-}
-
-.vs .aide-mention-row:hover,
-.vs .aide-mention-row.selected {
-	background: #f5f5f5;
-}
-
-.vs .aide-mention-row .desc {
-	color: #a3a3a3;
+/* System Online indicator */
+.aide-logo-icon::after {
+	content: '';
+	position: absolute;
+	top: -8px;
+	right: -8px;
+	width: 12px;
+	height: 12px;
+	background: #00ff00;
+	border-radius: 50%;
+	box-shadow: 0 0 10px #00ff00;
+	animation: status-pulse 2s ease-in-out infinite;
 }

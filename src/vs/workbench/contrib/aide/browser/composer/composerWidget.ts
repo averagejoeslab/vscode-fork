@@ -3,6 +3,7 @@
  *  Modern AI Assistant Interface
  *--------------------------------------------------------------------------------------------*/
 
+import '../media/aide.css';
 import { $, append, clearNode, addDisposableListener, EventType } from '../../../../../base/browser/dom.js';
 import { CancellationToken, CancellationTokenSource } from '../../../../../base/common/cancellation.js';
 import { Emitter, Event } from '../../../../../base/common/event.js';
