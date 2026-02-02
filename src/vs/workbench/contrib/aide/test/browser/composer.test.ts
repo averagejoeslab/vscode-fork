@@ -147,8 +147,10 @@ suite('AIDE Composer Tests', () => {
 		});
 
 		test('Ask mode should not use tools', () => {
-			const askMode = AideMode.Ask;
-			const shouldUseTools = askMode === AideMode.Agent;
+			const askMode: AideMode = AideMode.Ask;
+			// Check that Ask mode is different from Agent mode (which uses tools)
+			const isAgentMode = (mode: AideMode) => mode === AideMode.Agent;
+			const shouldUseTools = isAgentMode(askMode);
 
 			assert.strictEqual(shouldUseTools, false);
 		});

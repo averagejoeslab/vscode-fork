@@ -4,19 +4,17 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { CancellationToken, CancellationTokenSource } from '../../../../../base/common/cancellation.js';
-import { Disposable, DisposableStore, MutableDisposable } from '../../../../../base/common/lifecycle.js';
+import { Disposable, MutableDisposable } from '../../../../../base/common/lifecycle.js';
 import { RunOnceScheduler } from '../../../../../base/common/async.js';
-import { ICodeEditor, IEditorMouseEvent } from '../../../../../editor/browser/editorBrowser.js';
+import { ICodeEditor } from '../../../../../editor/browser/editorBrowser.js';
 import { IEditorContribution } from '../../../../../editor/common/editorCommon.js';
-import { EditorContextKeys } from '../../../../../editor/common/editorContextKeys.js';
 import { IConfigurationService } from '../../../../../platform/configuration/common/configuration.js';
-import { IContextKeyService, RawContextKey } from '../../../../../platform/contextkey/common/contextkey.js';
+import { RawContextKey } from '../../../../../platform/contextkey/common/contextkey.js';
 import { ILogService } from '../../../../../platform/log/common/log.js';
-import { IAideService, AideMessageRole } from '../../../../services/aide/common/aideService.js';
+import { IAideService } from '../../../../services/aide/common/aideService.js';
 import { Range } from '../../../../../editor/common/core/range.js';
 import { Position } from '../../../../../editor/common/core/position.js';
 import { ITextModel } from '../../../../../editor/common/model.js';
-import { InlineCompletionsController } from '../../../../../editor/contrib/inlineCompletions/browser/controller/inlineCompletionsController.js';
 
 export const AIDE_TAB_COMPLETION_CONTEXT = new RawContextKey<boolean>('aideTabCompletionActive', false);
 
@@ -36,13 +34,11 @@ export class AideTabCompletionController extends Disposable implements IEditorCo
 	private _state: ITabCompletionState | undefined;
 	private _enabled: boolean = true;
 	private _debounceMs: number = 150;
-	private _maxTokens: number = 256;
 
 	constructor(
 		private readonly _editor: ICodeEditor,
 		@IAideService private readonly _aideService: IAideService,
 		@IConfigurationService private readonly _configurationService: IConfigurationService,
-		@IContextKeyService private readonly _contextKeyService: IContextKeyService,
 		@ILogService private readonly _logService: ILogService
 	) {
 		super();
@@ -73,7 +69,6 @@ export class AideTabCompletionController extends Disposable implements IEditorCo
 	private _loadConfiguration(): void {
 		this._enabled = this._configurationService.getValue<boolean>('aide.tabCompletion.enabled') ?? true;
 		this._debounceMs = this._configurationService.getValue<number>('aide.tabCompletion.debounceMs') ?? 150;
-		this._maxTokens = this._configurationService.getValue<number>('aide.tabCompletion.maxTokens') ?? 256;
 	}
 
 	private _onContentChange(): void {

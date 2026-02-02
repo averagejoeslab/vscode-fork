@@ -6,7 +6,7 @@
 import assert from 'assert';
 import { ensureNoDisposablesAreLeakedInTestSuite } from '../../../../../base/test/common/utils.js';
 import { CancellationToken } from '../../../../../base/common/cancellation.js';
-import { Event, Emitter } from '../../../../../base/common/event.js';
+import { Emitter } from '../../../../../base/common/event.js';
 import { DisposableStore } from '../../../../../base/common/lifecycle.js';
 import {
 	AideMode,
@@ -17,7 +17,6 @@ import {
 	IAideMessage,
 	IAideModelInfo,
 	IAideModelProvider,
-	IAideService,
 	IAideStreamChunk
 } from '../../common/aideService.js';
 

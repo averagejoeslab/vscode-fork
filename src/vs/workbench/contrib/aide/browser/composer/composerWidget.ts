@@ -4,34 +4,24 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { $, append, clearNode } from '../../../../../base/browser/dom.js';
-import { IActionViewItemOptions } from '../../../../../base/browser/ui/actionbar/actionViewItems.js';
-import { ActionBar } from '../../../../../base/browser/ui/actionbar/actionbar.js';
 import { Button } from '../../../../../base/browser/ui/button/button.js';
-import { IInputBoxStyles, InputBox } from '../../../../../base/browser/ui/inputbox/inputBox.js';
+import { InputBox } from '../../../../../base/browser/ui/inputbox/inputBox.js';
 import { IListRenderer, IListVirtualDelegate } from '../../../../../base/browser/ui/list/list.js';
 import { List } from '../../../../../base/browser/ui/list/listWidget.js';
 import { SelectBox } from '../../../../../base/browser/ui/selectBox/selectBox.js';
-import { Action } from '../../../../../base/common/actions.js';
-import { CancellationTokenSource } from '../../../../../base/common/cancellation.js';
+import { CancellationToken, CancellationTokenSource } from '../../../../../base/common/cancellation.js';
 import { Emitter, Event } from '../../../../../base/common/event.js';
-import { Disposable, DisposableStore } from '../../../../../base/common/lifecycle.js';
+import { Disposable } from '../../../../../base/common/lifecycle.js';
 import { generateUuid } from '../../../../../base/common/uuid.js';
-import { ICodeEditor } from '../../../../../editor/browser/editorBrowser.js';
-import { localize } from '../../../../../nls.js';
-import { IContextKeyService } from '../../../../../platform/contextkey/common/contextkey.js';
 import { IContextViewService } from '../../../../../platform/contextview/browser/contextView.js';
-import { IInstantiationService } from '../../../../../platform/instantiation/common/instantiation.js';
-import { defaultInputBoxStyles } from '../../../../../platform/theme/browser/defaultStyles.js';
-import { IThemeService } from '../../../../../platform/theme/common/themeService.js';
+import { defaultInputBoxStyles, defaultSelectBoxStyles } from '../../../../../platform/theme/browser/defaultStyles.js';
 import {
 	AideMode,
 	AideMessageRole,
 	IAideAgent,
 	IAideAttachment,
-	IAideMessage,
 	IAideModelInfo,
-	IAideService,
-	IAideStreamChunk
+	IAideService
 } from '../../../../services/aide/common/aideService.js';
 import { IAideContextService } from '../../../../services/aide/common/aideContextService.js';
 
@@ -70,7 +60,7 @@ class MessageRenderer implements IListRenderer<IComposerMessage, IMessageTemplat
 		return { root, roleLabel, content, attachmentsContainer };
 	}
 
-	renderElement(element: IComposerMessage, index: number, templateData: IMessageTemplateData): void {
+	renderElement(element: IComposerMessage, _index: number, templateData: IMessageTemplateData): void {
 		templateData.root.className = `aide-message aide-message-${element.role}`;
 
 		// Role label
@@ -107,7 +97,7 @@ class MessageRenderer implements IListRenderer<IComposerMessage, IMessageTemplat
 		}
 	}
 
-	disposeTemplate(templateData: IMessageTemplateData): void {
+	disposeTemplate(_templateData: IMessageTemplateData): void {
 		// Nothing to dispose
 	}
 }
@@ -121,7 +111,7 @@ class MessageDelegate implements IListVirtualDelegate<IComposerMessage> {
 		return baseHeight + (contentLines * 20) + attachmentHeight;
 	}
 
-	getTemplateId(element: IComposerMessage): string {
+	getTemplateId(_element: IComposerMessage): string {
 		return 'message';
 	}
 }
@@ -154,10 +144,7 @@ export class ComposerWidget extends Disposable {
 
 	constructor(
 		container: HTMLElement,
-		@IInstantiationService private readonly _instantiationService: IInstantiationService,
-		@IThemeService private readonly _themeService: IThemeService,
 		@IContextViewService private readonly _contextViewService: IContextViewService,
-		@IContextKeyService private readonly _contextKeyService: IContextKeyService,
 		@IAideService private readonly _aideService: IAideService,
 		@IAideContextService private readonly _contextService: IAideContextService
 	) {
@@ -193,18 +180,16 @@ export class ComposerWidget extends Disposable {
 		const modeLabel = append(modeContainer, $('span.label'));
 		modeLabel.textContent = 'Mode:';
 
-		const modes = [
-			{ text: '∞ Agent', value: AideMode.Agent },
-			{ text: '≡ Plan', value: AideMode.Plan },
-			{ text: '⚙ Debug', value: AideMode.Debug },
-			{ text: '💬 Ask', value: AideMode.Ask }
-		];
-
 		this._modeSelect = this._register(new SelectBox(
-			modes.map(m => ({ text: m.text })),
+			[
+				{ text: '∞ Agent' },
+				{ text: '≡ Plan' },
+				{ text: '⚙ Debug' },
+				{ text: '💬 Ask' }
+			],
 			0,
 			this._contextViewService,
-			defaultInputBoxStyles
+			defaultSelectBoxStyles
 		));
 		this._modeSelect.render(modeContainer);
 
@@ -217,14 +202,13 @@ export class ComposerWidget extends Disposable {
 			[{ text: 'Loading...' }],
 			0,
 			this._contextViewService,
-			defaultInputBoxStyles
+			defaultSelectBoxStyles
 		));
 		this._modelSelect.render(modelContainer);
 	}
 
 	private _createMessagesList(): void {
-		this._messagesList = this._register(this._instantiationService.createInstance(
-			List,
+		this._messagesList = this._register(new List<IComposerMessage>(
 			'aide-messages',
 			this._messagesContainer,
 			new MessageDelegate(),
@@ -299,10 +283,8 @@ export class ComposerWidget extends Disposable {
 		this._register(this._sendButton.onDidClick(() => this._sendMessage()));
 
 		// Enter to send
-		this._register(this._inputBox.onDidChange(value => {
-			// Handle @ mentions for autocomplete
-			const mentions = this._contextService.parseMentions(value);
-			// Could show autocomplete here
+		this._register(this._inputBox.onDidChange(_value => {
+			// Handle @ mentions for autocomplete - could show autocomplete here
 		}));
 
 		// Agent changes

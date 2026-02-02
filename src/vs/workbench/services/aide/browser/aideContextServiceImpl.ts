@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { CancellationToken } from '../../../../base/common/cancellation.js';
-import { Emitter, Event } from '../../../../base/common/event.js';
-import { Disposable, DisposableStore, IDisposable, toDisposable } from '../../../../base/common/lifecycle.js';
+import { Emitter } from '../../../../base/common/event.js';
+import { Disposable, IDisposable, toDisposable } from '../../../../base/common/lifecycle.js';
 import { URI } from '../../../../base/common/uri.js';
 import { generateUuid } from '../../../../base/common/uuid.js';
 import { IConfigurationService } from '../../../../platform/configuration/common/configuration.js';
@@ -13,7 +13,7 @@ import { IFileService } from '../../../../platform/files/common/files.js';
 import { ILogService } from '../../../../platform/log/common/log.js';
 import { IWorkspaceContextService } from '../../../../platform/workspace/common/workspace.js';
 import { ISearchService, QueryType } from '../../../services/search/common/search.js';
-import { IAideAttachment, IAideEmbeddingProvider, IAideService } from '../common/aideService.js';
+import { IAideAttachment, IAideService } from '../common/aideService.js';
 import {
 	AideContextType,
 	IAideContextMention,
@@ -56,14 +56,17 @@ export class AideContextService extends Disposable implements IAideContextServic
 
 		// Watch for file changes to update index
 		this._register(this._fileService.onDidFilesChange(e => {
-			for (const change of e.rawChanges || []) {
-				if (change.type === 1) { // ADDED
-					this.indexFile(change.resource, CancellationToken.None);
-				} else if (change.type === 2) { // DELETED
-					this.removeFromIndex(change.resource);
-				} else if (change.type === 0) { // UPDATED
-					this.indexFile(change.resource, CancellationToken.None);
-				}
+			// Handle added files
+			for (const resource of e.rawAdded) {
+				this.indexFile(resource, CancellationToken.None);
+			}
+			// Handle deleted files
+			for (const resource of e.rawDeleted) {
+				this.removeFromIndex(resource);
+			}
+			// Handle updated files
+			for (const resource of e.rawUpdated) {
+				this.indexFile(resource, CancellationToken.None);
 			}
 		}));
 	}
@@ -329,13 +332,19 @@ export class AideContextService extends Disposable implements IAideContextServic
 				maxResults: limit
 			}, token || CancellationToken.None);
 
-			return searchResults.results.map(result => ({
-				uri: result.resource,
-				content: result.preview?.text || '',
-				score: 1.0,
-				matchType: 'lexical' as const,
-				range: result.preview?.matches?.[0]
-			}));
+			return searchResults.results.map(result => {
+				// Get the first text match result if available
+				const textMatch = result.results?.find((r): r is import('../../../services/search/common/search.js').ITextSearchMatch =>
+					'previewText' in r
+				);
+				return {
+					uri: result.resource,
+					content: textMatch?.previewText || '',
+					score: 1.0,
+					matchType: 'lexical' as const,
+					range: textMatch?.rangeLocations?.[0]?.source
+				};
+			});
 		} catch (error) {
 			this._logService.error('[AideContext] Lexical search failed:', error);
 			return [];

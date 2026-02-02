@@ -3,16 +3,14 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { $, append, clearNode } from '../../../../../base/browser/dom.js';
+import { $, append } from '../../../../../base/browser/dom.js';
 import { Button } from '../../../../../base/browser/ui/button/button.js';
 import { InputBox } from '../../../../../base/browser/ui/inputbox/inputBox.js';
 import { IListRenderer, IListVirtualDelegate } from '../../../../../base/browser/ui/list/list.js';
 import { List } from '../../../../../base/browser/ui/list/listWidget.js';
-import { Emitter, Event } from '../../../../../base/common/event.js';
+import { Emitter } from '../../../../../base/common/event.js';
 import { Disposable, DisposableStore } from '../../../../../base/common/lifecycle.js';
-import { localize } from '../../../../../nls.js';
 import { IContextViewService } from '../../../../../platform/contextview/browser/contextView.js';
-import { IInstantiationService } from '../../../../../platform/instantiation/common/instantiation.js';
 import { defaultInputBoxStyles } from '../../../../../platform/theme/browser/defaultStyles.js';
 import { AideMode, IAideAgent, IAideService } from '../../../../services/aide/common/aideService.js';
 
@@ -47,7 +45,7 @@ class AgentRenderer implements IListRenderer<IAgentListItem, IAgentTemplateData>
 		return { root, icon, name, time, disposables };
 	}
 
-	renderElement(element: IAgentListItem, index: number, templateData: IAgentTemplateData): void {
+	renderElement(element: IAgentListItem, _index: number, templateData: IAgentTemplateData): void {
 		templateData.root.className = `aide-agent-item ${element.isActive ? 'active' : ''}`;
 
 		// Mode icon
@@ -100,7 +98,7 @@ class AgentDelegate implements IListVirtualDelegate<IAgentListItem> {
 		return 48;
 	}
 
-	getTemplateId(element: IAgentListItem): string {
+	getTemplateId(_element: IAgentListItem): string {
 		return 'agent';
 	}
 }
@@ -127,7 +125,6 @@ export class AgentSidebar extends Disposable {
 
 	constructor(
 		container: HTMLElement,
-		@IInstantiationService private readonly _instantiationService: IInstantiationService,
 		@IContextViewService private readonly _contextViewService: IContextViewService,
 		@IAideService private readonly _aideService: IAideService
 	) {
@@ -163,8 +160,7 @@ export class AgentSidebar extends Disposable {
 		listHeader.textContent = 'Agents';
 
 		const listContainer = append(this._container, $('.aide-agent-list'));
-		this._agentsList = this._register(this._instantiationService.createInstance(
-			List,
+		this._agentsList = this._register(new List<IAgentListItem>(
 			'aide-agents',
 			listContainer,
 			new AgentDelegate(),

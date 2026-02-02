@@ -6,7 +6,7 @@
 import assert from 'assert';
 import { ensureNoDisposablesAreLeakedInTestSuite } from '../../../../../base/test/common/utils.js';
 import { DisposableStore } from '../../../../../base/common/lifecycle.js';
-import { AideMessageRole, IAideCompletionRequest, IAideMessage } from '../../common/aideService.js';
+import { AideMessageRole, IAideMessage } from '../../common/aideService.js';
 
 // ============================================================================
 // Provider Tests
