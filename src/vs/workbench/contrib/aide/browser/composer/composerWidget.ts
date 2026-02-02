@@ -72,13 +72,17 @@ class MessageRenderer implements IListRenderer<IComposerMessage, IMessageTemplat
 		templateData.root.className = `aide-message aide-message-${element.role}`;
 
 		// Role label with icon
+		clearNode(templateData.roleLabel);
 		switch (element.role) {
 			case AideMessageRole.User:
 				templateData.roleLabel.textContent = '> YOU';
 				break;
-			case AideMessageRole.Assistant:
-				templateData.roleLabel.innerHTML = '<span class="aide-icon">◆</span> AIDE';
+			case AideMessageRole.Assistant: {
+				const iconSpan = append(templateData.roleLabel, $('span.aide-icon'));
+				iconSpan.textContent = '◆';
+				append(templateData.roleLabel, document.createTextNode(' AIDE'));
 				break;
+			}
 			case AideMessageRole.System:
 				templateData.roleLabel.textContent = '⚡ SYSTEM';
 				break;
@@ -89,9 +93,9 @@ class MessageRenderer implements IListRenderer<IComposerMessage, IMessageTemplat
 				templateData.roleLabel.textContent = '';
 		}
 
-		// Content with markdown-like rendering
-		const formattedContent = this._formatContent(element.content);
-		templateData.content.innerHTML = formattedContent;
+		// Content - use textContent for CSP compliance
+		// TODO: Use VS Code's markdown renderer for proper formatting
+		templateData.content.textContent = element.content;
 
 		if (element.isStreaming) {
 			templateData.content.classList.add('streaming');
@@ -118,42 +122,12 @@ class MessageRenderer implements IListRenderer<IComposerMessage, IMessageTemplat
 		if (element.attachments && element.attachments.length > 0) {
 			for (const attachment of element.attachments) {
 				const chip = append(templateData.attachmentsContainer, $('.aide-attachment-chip'));
-				const icon = this._getAttachmentIcon(attachment.type);
-				chip.innerHTML = `<span class="icon">${icon}</span> ${this._escapeHtml(attachment.name)}`;
+				const iconSpan = append(chip, $('span.icon'));
+				iconSpan.textContent = this._getAttachmentIcon(attachment.type);
+				append(chip, document.createTextNode(' ' + attachment.name));
 				chip.title = attachment.preview || '';
 			}
 		}
-	}
-
-	private _formatContent(content: string): string {
-		if (!content) return '';
-
-		// Escape HTML first
-		let formatted = this._escapeHtml(content);
-
-		// Code blocks (```...```)
-		formatted = formatted.replace(/```(\w*)\n?([\s\S]*?)```/g, '<pre><code class="language-$1">$2</code></pre>');
-
-		// Inline code (`...`)
-		formatted = formatted.replace(/`([^`]+)`/g, '<code>$1</code>');
-
-		// Bold (**...** or __...__)
-		formatted = formatted.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-		formatted = formatted.replace(/__([^_]+)__/g, '<strong>$1</strong>');
-
-		// Italic (*...* or _..._)
-		formatted = formatted.replace(/\*([^*]+)\*/g, '<em>$1</em>');
-
-		// Line breaks
-		formatted = formatted.replace(/\n/g, '<br>');
-
-		return formatted;
-	}
-
-	private _escapeHtml(text: string): string {
-		const div = document.createElement('div');
-		div.textContent = text;
-		return div.innerHTML;
 	}
 
 	private _getAttachmentIcon(type: IAideAttachment['type']): string {
@@ -293,7 +267,9 @@ export class ComposerWidget extends Disposable {
 		// Title and status
 		const titleRow = append(this._headerContainer, $('.aide-header-title'));
 		const title = append(titleRow, $('h2'));
-		title.innerHTML = '<span class="aide-logo">◆</span> AIDE';
+		const logo = append(title, $('span.aide-logo'));
+		logo.textContent = '◆';
+		append(title, document.createTextNode(' AIDE'));
 		const statusDot = append(titleRow, $('.aide-status-dot.active'));
 		statusDot.title = 'System Online';
 
@@ -333,20 +309,31 @@ export class ComposerWidget extends Disposable {
 
 	private _createEmptyState(): void {
 		const icon = append(this._emptyState, $('.aide-empty-state-icon'));
-		icon.innerHTML = '◆';
+		icon.textContent = '◆';
 
 		const title = append(this._emptyState, $('.aide-empty-state-title'));
 		title.textContent = 'AIDE READY';
 
 		const description = append(this._emptyState, $('.aide-empty-state-description'));
-		description.innerHTML = `
-			<p>Your AI-powered development companion awaits.</p>
-			<div class="aide-hints">
-				<div class="hint"><span class="key">@</span> Add context</div>
-				<div class="hint"><span class="key">/</span> Commands</div>
-				<div class="hint"><span class="key">Enter</span> Send</div>
-			</div>
-		`;
+		const descText = append(description, $('p'));
+		descText.textContent = 'Your AI-powered development companion awaits.';
+
+		const hints = append(description, $('.aide-hints'));
+
+		const hint1 = append(hints, $('.hint'));
+		const key1 = append(hint1, $('span.key'));
+		key1.textContent = '@';
+		append(hint1, document.createTextNode(' Add context'));
+
+		const hint2 = append(hints, $('.hint'));
+		const key2 = append(hint2, $('span.key'));
+		key2.textContent = '/';
+		append(hint2, document.createTextNode(' Commands'));
+
+		const hint3 = append(hints, $('.hint'));
+		const key3 = append(hint3, $('span.key'));
+		key3.textContent = 'Enter';
+		append(hint3, document.createTextNode(' Send'));
 	}
 
 	private _createMessagesList(): void {
@@ -368,7 +355,8 @@ export class ComposerWidget extends Disposable {
 
 		// @ mention button
 		const mentionButton = append(buttonsContainer, $('button.aide-button'));
-		mentionButton.innerHTML = '<span>@</span>';
+		const mentionSpan = append(mentionButton, $('span'));
+		mentionSpan.textContent = '@';
 		mentionButton.title = 'Add context (@file, @codebase, @web...)';
 		this._register(Event.fromDOMEventEmitter<MouseEvent>(mentionButton, 'click')(() => {
 			this._insertMentionTrigger();
@@ -376,7 +364,8 @@ export class ComposerWidget extends Disposable {
 
 		// Codebase search button
 		const searchButton = append(buttonsContainer, $('button.aide-button'));
-		searchButton.innerHTML = '<span>🔍</span>';
+		const searchSpan = append(searchButton, $('span'));
+		searchSpan.textContent = '🔍';
 		searchButton.title = 'Search codebase';
 		this._register(Event.fromDOMEventEmitter<MouseEvent>(searchButton, 'click')(() => {
 			this._inputBox.value += '@codebase:';
@@ -385,7 +374,8 @@ export class ComposerWidget extends Disposable {
 
 		// File button
 		const fileButton = append(buttonsContainer, $('button.aide-button'));
-		fileButton.innerHTML = '<span>📄</span>';
+		const fileSpan = append(fileButton, $('span'));
+		fileSpan.textContent = '📄';
 		fileButton.title = 'Add file';
 		this._register(Event.fromDOMEventEmitter<MouseEvent>(fileButton, 'click')(() => {
 			this._inputBox.value += '@file:';
@@ -394,7 +384,8 @@ export class ComposerWidget extends Disposable {
 
 		// Web button
 		const webButton = append(buttonsContainer, $('button.aide-button'));
-		webButton.innerHTML = '<span>🌐</span>';
+		const webSpan = append(webButton, $('span'));
+		webSpan.textContent = '🌐';
 		webButton.title = 'Web search';
 		this._register(Event.fromDOMEventEmitter<MouseEvent>(webButton, 'click')(() => {
 			this._inputBox.value += '@web:';
@@ -521,11 +512,13 @@ export class ComposerWidget extends Disposable {
 		for (let i = 0; i < filteredTypes.length; i++) {
 			const item = filteredTypes[i];
 			const itemEl = append(this._mentionDropdown, $('.aide-mention-item'));
-			itemEl.innerHTML = `
-				<span class="icon">${item.icon}</span>
-				<span class="label">@${item.label}</span>
-				<span class="description">${item.description}</span>
-			`;
+
+			const iconSpan = append(itemEl, $('span.icon'));
+			iconSpan.textContent = item.icon;
+			const labelSpan = append(itemEl, $('span.label'));
+			labelSpan.textContent = '@' + item.label;
+			const descSpan = append(itemEl, $('span.description'));
+			descSpan.textContent = item.description;
 
 			if (i === this._selectedMentionIndex) {
 				itemEl.classList.add('selected');
@@ -661,13 +654,19 @@ export class ComposerWidget extends Disposable {
 	}
 
 	private _updateStatusBar(): void {
+		clearNode(this._statusBar);
+		const dot = append(this._statusBar, $('span.aide-status-dot'));
+
 		if (this._isGenerating) {
-			this._statusBar.innerHTML = '<span class="aide-status-dot processing"></span> Processing...';
+			dot.classList.add('processing');
+			append(this._statusBar, document.createTextNode(' Processing...'));
 		} else if (this._currentAgent) {
+			dot.classList.add('active');
 			const mode = this._currentAgent.mode.toUpperCase();
-			this._statusBar.innerHTML = `<span class="aide-status-dot active"></span> ${mode} MODE ACTIVE`;
+			append(this._statusBar, document.createTextNode(' ' + mode + ' MODE ACTIVE'));
 		} else {
-			this._statusBar.innerHTML = '<span class="aide-status-dot active"></span> READY';
+			dot.classList.add('active');
+			append(this._statusBar, document.createTextNode(' READY'));
 		}
 	}
 
@@ -781,7 +780,8 @@ export class ComposerWidget extends Disposable {
 
 		for (const attachment of this._attachments) {
 			const chip = append(this._attachmentsContainer, $('.aide-attachment-chip'));
-			chip.innerHTML = `<span class="name">${this._escapeHtml(attachment.name)}</span>`;
+			const nameSpan = append(chip, $('span.name'));
+			nameSpan.textContent = attachment.name;
 			chip.title = attachment.preview || '';
 
 			const removeButton = append(chip, $('span.remove'));
@@ -791,12 +791,6 @@ export class ComposerWidget extends Disposable {
 				this._updateAttachmentsUI();
 			}));
 		}
-	}
-
-	private _escapeHtml(text: string): string {
-		const div = document.createElement('div');
-		div.textContent = text;
-		return div.innerHTML;
 	}
 
 	public addAttachment(attachment: IAideAttachment): void {
