@@ -5,6 +5,7 @@
 
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import os from 'os';
 import rimraf from 'rimraf';
 import es from 'event-stream';
@@ -181,7 +182,10 @@ export function getBuiltInExtensions(): Promise<void> {
 	});
 }
 
-if (import.meta.main) {
+// Check if this module is being run directly
+const isMain = process.argv[1] && fileURLToPath(import.meta.url).includes(process.argv[1].replace(/\\/g, '/'));
+
+if (isMain) {
 	getBuiltInExtensions().then(() => process.exit(0)).catch(err => {
 		console.error(err);
 		process.exit(1);

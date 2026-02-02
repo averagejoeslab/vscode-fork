@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import path from 'path';
+import { fileURLToPath } from 'url';
 import { spawn } from 'child_process';
 import { promises as fs } from 'fs';
 
@@ -52,7 +53,10 @@ async function main() {
 	await getBuiltInExtensions();
 }
 
-if (import.meta.main) {
+// Check if this module is being run directly
+const isMain = process.argv[1] && fileURLToPath(import.meta.url).includes(process.argv[1].replace(/\\/g, '/'));
+
+if (isMain) {
 	main().catch(err => {
 		console.error(err);
 		process.exit(1);

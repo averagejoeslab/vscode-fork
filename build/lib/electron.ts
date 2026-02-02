@@ -5,6 +5,7 @@
 
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import vfs from 'vinyl-fs';
 import filter from 'gulp-filter';
 import * as util from './util.ts';
@@ -239,7 +240,10 @@ async function main(arch: string = process.arch): Promise<void> {
 	}
 }
 
-if (import.meta.main) {
+// Check if this module is being run directly (ESM equivalent of require.main === module)
+const isMain = process.argv[1] && fileURLToPath(import.meta.url).includes(process.argv[1].replace(/\\/g, '/'));
+
+if (isMain) {
 	main(process.argv[2]).catch(err => {
 		console.error(err);
 		process.exit(1);
