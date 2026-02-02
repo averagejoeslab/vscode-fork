@@ -1,78 +1,139 @@
-# Visual Studio Code - Open Source ("Code - OSS")
-[![Feature Requests](https://img.shields.io/github/issues/microsoft/vscode/feature-request.svg)](https://github.com/microsoft/vscode/issues?q=is%3Aopen+is%3Aissue+label%3Afeature-request+sort%3Areactions-%2B1-desc)
-[![Bugs](https://img.shields.io/github/issues/microsoft/vscode/bug.svg)](https://github.com/microsoft/vscode/issues?utf8=✓&q=is%3Aissue+is%3Aopen+label%3Abug)
-[![Gitter](https://img.shields.io/badge/chat-on%20gitter-yellow.svg)](https://gitter.im/Microsoft/vscode)
+# AIDE - AI Development Environment
 
-## The Repository
+An open-source AI-native IDE built on Visual Studio Code. AIDE integrates AI capabilities directly into the core editor experience, providing intelligent coding assistance without requiring external subscriptions.
 
-This repository ("`Code - OSS`") is where we (Microsoft) develop the [Visual Studio Code](https://code.visualstudio.com) product together with the community. Not only do we work on code and issues here, we also publish our [roadmap](https://github.com/microsoft/vscode/wiki/Roadmap), [monthly iteration plans](https://github.com/microsoft/vscode/wiki/Iteration-Plans), and our [endgame plans](https://github.com/microsoft/vscode/wiki/Running-the-Endgame). This source code is available to everyone under the standard [MIT license](https://github.com/microsoft/vscode/blob/main/LICENSE.txt).
+## Features
 
-## Visual Studio Code
+### Composer
+The central AI chat interface with multiple interaction modes:
 
-<p align="center">
-  <img alt="VS Code in action" src="https://user-images.githubusercontent.com/35271042/118224532-3842c400-b438-11eb-923d-a5f66fa6785a.png">
-</p>
+- **Agent Mode** - Full autonomous coding assistant with tool access (file read/write, terminal, search)
+- **Plan Mode** - Strategic planning for complex tasks before execution
+- **Debug Mode** - Focused debugging assistance with error analysis
+- **Ask Mode** - Quick Q&A without code modifications
 
-[Visual Studio Code](https://code.visualstudio.com) is a distribution of the `Code - OSS` repository with Microsoft-specific customizations released under a traditional [Microsoft product license](https://code.visualstudio.com/License/).
+### Multi-Agent Management
+- Create and manage multiple AI agents for different tasks
+- Each agent maintains its own conversation history and context
+- Quick switching between agents via the sidebar
 
-[Visual Studio Code](https://code.visualstudio.com) combines the simplicity of a code editor with what developers need for their core edit-build-debug cycle. It provides comprehensive code editing, navigation, and understanding support along with lightweight debugging, a rich extensibility model, and lightweight integration with existing tools.
+### Context System
+Rich context integration using `@` mentions:
+- `@file` - Reference specific files
+- `@folder` - Include entire directories
+- `@codebase` - Semantic search across your project
+- `@terminal` - Include terminal output
+- `@web` - Web search integration
+- `@selection` - Current editor selection
 
-Visual Studio Code is updated monthly with new features and bug fixes. You can download it for Windows, macOS, and Linux on [Visual Studio Code's website](https://code.visualstudio.com/Download). To get the latest releases every day, install the [Insiders build](https://code.visualstudio.com/insiders).
+### AI-Powered Tab Completion
+Intelligent inline code suggestions powered by your configured AI models.
+
+### Multi-Provider Support
+Connect to multiple AI providers:
+- **OpenAI** - GPT-4o, GPT-4, o1, and more
+- **Anthropic** - Claude Opus, Sonnet, and Haiku models
+- **Ollama** - Run local models (Llama, Mistral, CodeLlama, etc.)
+
+## Getting Started
+
+### Prerequisites
+- Node.js 18.x or higher
+- Git
+- Python 3.x (for native module compilation)
+
+### Building from Source
+
+```bash
+# Clone the repository
+git clone https://github.com/averagejoeslab/vscode-fork.git
+cd vscode-fork
+
+# Install dependencies
+npm install --ignore-scripts
+cd build && npm install --ignore-scripts && cd ..
+
+# Compile
+npm run compile
+
+# Run the application
+./scripts/code.sh  # Linux/macOS
+./scripts/code.bat # Windows
+```
+
+### Configuration
+
+Configure your AI providers in Settings (`Cmd/Ctrl + ,`):
+
+```json
+{
+  "aide.providers.openai.apiKey": "your-api-key",
+  "aide.providers.anthropic.apiKey": "your-api-key",
+  "aide.providers.ollama.baseUrl": "http://localhost:11434",
+  "aide.defaultModel": "openai/gpt-4o",
+  "aide.tabCompletion.enabled": true
+}
+```
+
+## Keyboard Shortcuts
+
+| Command | Shortcut |
+|---------|----------|
+| Open Composer | `Cmd/Ctrl + I` |
+| New Agent | `Cmd/Ctrl + N` |
+
+## Architecture
+
+AIDE extends VS Code with the following services:
+
+- **AideService** - Core AI service managing agents, models, and chat
+- **AideContextService** - Context resolution, codebase indexing, and semantic search
+- **Model Providers** - Pluggable architecture for OpenAI, Anthropic, Ollama, and custom providers
+
+## Project Structure
+
+```
+src/vs/workbench/
+├── services/aide/
+│   ├── common/           # Service interfaces
+│   │   ├── aideService.ts
+│   │   └── aideContextService.ts
+│   └── browser/          # Service implementations
+│       ├── aideServiceImpl.ts
+│       ├── aideContextServiceImpl.ts
+│       └── providers/    # AI model providers
+│           ├── openaiProvider.ts
+│           ├── anthropicProvider.ts
+│           └── ollamaProvider.ts
+└── contrib/aide/
+    └── browser/
+        ├── composer/     # Chat UI components
+        ├── tabCompletion/
+        └── media/        # Styles
+```
 
 ## Contributing
 
-There are many ways in which you can participate in this project, for example:
+Contributions are welcome! Please feel free to submit issues and pull requests.
 
-* [Submit bugs and feature requests](https://github.com/microsoft/vscode/issues), and help us verify as they are checked in
-* Review [source code changes](https://github.com/microsoft/vscode/pulls)
-* Review the [documentation](https://github.com/microsoft/vscode-docs) and make pull requests for anything from typos to additional and new content
+### Development
 
-If you are interested in fixing issues and contributing directly to the code base,
-please see the document [How to Contribute](https://github.com/microsoft/vscode/wiki/How-to-Contribute), which covers the following:
+```bash
+# Run tests
+npm test
 
-* [How to build and run from source](https://github.com/microsoft/vscode/wiki/How-to-Contribute)
-* [The development workflow, including debugging and running tests](https://github.com/microsoft/vscode/wiki/How-to-Contribute#debugging)
-* [Coding guidelines](https://github.com/microsoft/vscode/wiki/Coding-Guidelines)
-* [Submitting pull requests](https://github.com/microsoft/vscode/wiki/How-to-Contribute#pull-requests)
-* [Finding an issue to work on](https://github.com/microsoft/vscode/wiki/How-to-Contribute#where-to-contribute)
-* [Contributing to translations](https://aka.ms/vscodeloc)
+# Watch mode for development
+npm run watch
+```
 
-## Feedback
+## Credits
 
-* Ask a question on [Stack Overflow](https://stackoverflow.com/questions/tagged/vscode)
-* [Request a new feature](CONTRIBUTING.md)
-* Upvote [popular feature requests](https://github.com/microsoft/vscode/issues?q=is%3Aopen+is%3Aissue+label%3Afeature-request+sort%3Areactions-%2B1-desc)
-* [File an issue](https://github.com/microsoft/vscode/issues)
-* Connect with the extension author community on [GitHub Discussions](https://github.com/microsoft/vscode-discussions/discussions) or [Slack](https://aka.ms/vscode-dev-community)
-* Follow [@code](https://x.com/code) and let us know what you think!
-
-See our [wiki](https://github.com/microsoft/vscode/wiki/Feedback-Channels) for a description of each of these channels and information on some other available community-driven channels.
-
-## Related Projects
-
-Many of the core components and extensions to VS Code live in their own repositories on GitHub. For example, the [node debug adapter](https://github.com/microsoft/vscode-node-debug) and the [mono debug adapter](https://github.com/microsoft/vscode-mono-debug) repositories are separate from each other. For a complete list, please visit the [Related Projects](https://github.com/microsoft/vscode/wiki/Related-Projects) page on our [wiki](https://github.com/microsoft/vscode/wiki).
-
-## Bundled Extensions
-
-VS Code includes a set of built-in extensions located in the [extensions](extensions) folder, including grammars and snippets for many languages. Extensions that provide rich language support (inline suggestions, Go to Definition) for a language have the suffix `language-features`. For example, the `json` extension provides coloring for `JSON` and the `json-language-features` extension provides rich language support for `JSON`.
-
-## Development Container
-
-This repository includes a Visual Studio Code Dev Containers / GitHub Codespaces development container.
-
-* For [Dev Containers](https://aka.ms/vscode-remote/download/containers), use the **Dev Containers: Clone Repository in Container Volume...** command which creates a Docker volume for better disk I/O on macOS and Windows.
-  * If you already have VS Code and Docker installed, you can also click [here](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/microsoft/vscode) to get started. This will cause VS Code to automatically install the Dev Containers extension if needed, clone the source code into a container volume, and spin up a dev container for use.
-
-* For Codespaces, install the [GitHub Codespaces](https://marketplace.visualstudio.com/items?itemName=GitHub.codespaces) extension in VS Code, and use the **Codespaces: Create New Codespace** command.
-
-Docker / the Codespace should have at least **4 Cores and 6 GB of RAM (8 GB recommended)** to run a full build. See the [development container README](.devcontainer/README.md) for more information.
-
-## Code of Conduct
-
-This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+AIDE is built on [Visual Studio Code](https://github.com/microsoft/vscode), an open-source project by Microsoft. We extend our thanks to the VS Code team and community for creating such an excellent foundation.
 
 ## License
 
-Copyright (c) Microsoft Corporation. All rights reserved.
+This project is licensed under the [MIT License](LICENSE.txt).
 
-Licensed under the [MIT](LICENSE.txt) license.
+---
+
+**Note:** This is an independent open-source project and is not affiliated with Microsoft, Cursor, or any AI provider. You must provide your own API keys for the AI services you wish to use.
