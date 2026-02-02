@@ -1,165 +1,297 @@
 /*---------------------------------------------------------------------------------------------
  *  AIDE - AI Development Environment
- *  BATCOMPUTER EDITION - Dark. Sleek. Powerful.
+ *  Modern, Minimal, Powerful
  *--------------------------------------------------------------------------------------------*/
 
 /* ============================================================================
-   CSS Variables - The Dark Knight Palette
+   Design System Variables
    ============================================================================ */
 
 .aide-composer-container,
 .aide-composer {
-	--bat-void: #000000;
-	--bat-black: #0a0a0f;
-	--bat-dark: #0d1117;
-	--bat-surface: #13161d;
-	--bat-elevated: #1a1f2a;
-	--bat-border: #232830;
-	--bat-hover: #2a303a;
+	/* Background System */
+	--aide-bg-base: #0a0a0b;
+	--aide-bg-subtle: #111113;
+	--aide-bg-muted: #18181b;
+	--aide-bg-elevated: #1f1f23;
+	--aide-bg-overlay: rgba(0, 0, 0, 0.8);
 
-	--bat-text: #e4e8f0;
-	--bat-text-secondary: #8b9ab0;
-	--bat-text-muted: #5a6578;
+	/* Border System */
+	--aide-border-subtle: rgba(255, 255, 255, 0.06);
+	--aide-border-default: rgba(255, 255, 255, 0.1);
+	--aide-border-strong: rgba(255, 255, 255, 0.15);
 
-	--bat-blue: #00d4ff;
-	--bat-blue-dim: rgba(0, 212, 255, 0.15);
-	--bat-blue-glow: rgba(0, 212, 255, 0.5);
-	--bat-purple: #a855f7;
-	--bat-purple-dim: rgba(168, 85, 247, 0.15);
-	--bat-cyan: #22d3ee;
-	--bat-green: #10b981;
-	--bat-amber: #f59e0b;
-	--bat-red: #ef4444;
+	/* Text System */
+	--aide-text-primary: #fafafa;
+	--aide-text-secondary: #a1a1aa;
+	--aide-text-muted: #71717a;
+	--aide-text-placeholder: #52525b;
 
-	--bat-gradient: linear-gradient(135deg, var(--bat-blue) 0%, var(--bat-purple) 100%);
-	--bat-gradient-subtle: linear-gradient(180deg, rgba(0, 212, 255, 0.08) 0%, transparent 100%);
-	--bat-glow: 0 0 30px var(--bat-blue-glow), 0 0 60px rgba(0, 212, 255, 0.2);
-	--bat-glow-sm: 0 0 15px var(--bat-blue-glow);
+	/* Accent Colors */
+	--aide-accent: #3b82f6;
+	--aide-accent-hover: #60a5fa;
+	--aide-accent-subtle: rgba(59, 130, 246, 0.15);
+	--aide-accent-glow: rgba(59, 130, 246, 0.4);
 
-	--bat-radius: 8px;
-	--bat-radius-lg: 12px;
-	--bat-transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+	/* Semantic Colors */
+	--aide-success: #22c55e;
+	--aide-warning: #f59e0b;
+	--aide-error: #ef4444;
+
+	/* Effects */
+	--aide-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+	--aide-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+	--aide-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+	--aide-shadow-glow: 0 0 20px var(--aide-accent-glow);
+
+	/* Spacing */
+	--aide-space-xs: 4px;
+	--aide-space-sm: 8px;
+	--aide-space-md: 12px;
+	--aide-space-lg: 16px;
+	--aide-space-xl: 24px;
+	--aide-space-2xl: 32px;
+
+	/* Radius */
+	--aide-radius-sm: 6px;
+	--aide-radius-md: 8px;
+	--aide-radius-lg: 12px;
+	--aide-radius-xl: 16px;
+	--aide-radius-full: 9999px;
+
+	/* Typography */
+	--aide-font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+	--aide-font-mono: 'SF Mono', 'Fira Code', 'JetBrains Mono', Consolas, monospace;
+
+	/* Transitions */
+	--aide-transition-fast: 150ms ease;
+	--aide-transition-base: 200ms ease;
+	--aide-transition-slow: 300ms ease;
 }
 
 /* ============================================================================
-   Composer Container - The Batcave
+   Base Container
    ============================================================================ */
 
 .aide-composer-container {
-	background: var(--bat-black);
+	background: var(--aide-bg-base);
 	height: 100%;
 	display: flex;
 	flex-direction: column;
 	overflow: hidden;
-	position: relative;
-}
-
-/* Subtle scan line effect */
-.aide-composer-container::before {
-	content: '';
-	position: absolute;
-	inset: 0;
-	background: repeating-linear-gradient(
-		0deg,
-		transparent,
-		transparent 2px,
-		rgba(0, 212, 255, 0.01) 2px,
-		rgba(0, 212, 255, 0.01) 4px
-	);
-	pointer-events: none;
-	z-index: 1000;
-	opacity: 0.3;
 }
 
 .aide-composer {
 	display: flex;
 	flex-direction: column;
 	height: 100%;
-	background: linear-gradient(180deg, var(--bat-black) 0%, var(--bat-dark) 100%);
-	color: var(--bat-text);
-	font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-	position: relative;
+	background: var(--aide-bg-base);
+	color: var(--aide-text-primary);
+	font-family: var(--aide-font-sans);
+	font-size: 13px;
+	line-height: 1.5;
 }
 
 /* ============================================================================
-   Header - Command Center
+   Header Section
    ============================================================================ */
 
 .aide-composer-header {
+	flex-shrink: 0;
 	display: flex;
 	flex-direction: column;
-	gap: 12px;
-	padding: 16px;
-	background: linear-gradient(180deg, var(--bat-surface) 0%, var(--bat-dark) 100%);
-	border-bottom: 1px solid var(--bat-border);
-	position: relative;
+	gap: var(--aide-space-lg);
+	padding: var(--aide-space-lg);
+	background: var(--aide-bg-subtle);
+	border-bottom: 1px solid var(--aide-border-subtle);
 }
 
-/* Glowing top border */
-.aide-composer-header::before {
-	content: '';
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	height: 1px;
-	background: var(--bat-gradient);
-	opacity: 0.6;
+.aide-header-title {
+	display: flex;
+	align-items: center;
+	gap: var(--aide-space-md);
+}
+
+.aide-header-title h2 {
+	display: flex;
+	align-items: center;
+	gap: var(--aide-space-sm);
+	font-size: 15px;
+	font-weight: 600;
+	color: var(--aide-text-primary);
+	margin: 0;
+}
+
+.aide-logo {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 24px;
+	height: 24px;
+	background: linear-gradient(135deg, var(--aide-accent) 0%, #8b5cf6 100%);
+	border-radius: var(--aide-radius-sm);
+	color: white;
+	font-size: 14px;
+}
+
+.aide-status-dot {
+	width: 8px;
+	height: 8px;
+	border-radius: var(--aide-radius-full);
+	margin-left: auto;
+}
+
+.aide-status-dot.active {
+	background: var(--aide-success);
+	box-shadow: 0 0 8px rgba(34, 197, 94, 0.5);
+}
+
+.aide-status-dot.processing {
+	background: var(--aide-accent);
+	box-shadow: 0 0 8px var(--aide-accent-glow);
+	animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+	0%, 100% { opacity: 1; transform: scale(1); }
+	50% { opacity: 0.7; transform: scale(1.1); }
+}
+
+.aide-header-controls {
+	display: flex;
+	gap: var(--aide-space-md);
 }
 
 .aide-composer-mode,
 .aide-composer-model {
+	flex: 1;
 	display: flex;
 	flex-direction: column;
-	gap: 6px;
+	gap: var(--aide-space-xs);
 }
 
 .aide-composer-mode .label,
 .aide-composer-model .label {
 	font-size: 10px;
-	font-weight: 700;
+	font-weight: 600;
 	text-transform: uppercase;
-	letter-spacing: 1.5px;
-	color: var(--bat-blue);
-	text-shadow: 0 0 10px var(--bat-blue-glow);
+	letter-spacing: 0.5px;
+	color: var(--aide-text-muted);
 }
 
+/* Select Box Styling */
 .aide-composer-header .monaco-select-box {
-	background: var(--bat-elevated) !important;
-	border: 1px solid var(--bat-border) !important;
-	border-radius: var(--bat-radius) !important;
-	color: var(--bat-text) !important;
+	background: var(--aide-bg-muted) !important;
+	border: 1px solid var(--aide-border-default) !important;
+	border-radius: var(--aide-radius-md) !important;
+	color: var(--aide-text-primary) !important;
 	font-size: 13px;
 	font-weight: 500;
-	padding: 8px 12px;
-	transition: all var(--bat-transition);
+	padding: var(--aide-space-sm) var(--aide-space-md);
+	transition: all var(--aide-transition-fast);
+	cursor: pointer;
 }
 
 .aide-composer-header .monaco-select-box:hover {
-	border-color: var(--bat-blue) !important;
-	box-shadow: var(--bat-glow-sm);
+	background: var(--aide-bg-elevated) !important;
+	border-color: var(--aide-border-strong) !important;
 }
 
 .aide-composer-header .monaco-select-box:focus {
-	border-color: var(--bat-blue) !important;
+	border-color: var(--aide-accent) !important;
 	outline: none;
-	box-shadow: var(--bat-glow);
+	box-shadow: 0 0 0 2px var(--aide-accent-subtle);
 }
 
 /* ============================================================================
-   Messages List - The Feed
+   Empty State
+   ============================================================================ */
+
+.aide-empty-state {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: var(--aide-space-2xl);
+	text-align: center;
+}
+
+.aide-empty-state-icon {
+	width: 64px;
+	height: 64px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: linear-gradient(135deg, var(--aide-accent) 0%, #8b5cf6 100%);
+	border-radius: var(--aide-radius-xl);
+	font-size: 28px;
+	margin-bottom: var(--aide-space-xl);
+	box-shadow: var(--aide-shadow-glow);
+}
+
+.aide-empty-state-title {
+	font-size: 16px;
+	font-weight: 600;
+	color: var(--aide-text-primary);
+	margin-bottom: var(--aide-space-sm);
+}
+
+.aide-empty-state-description {
+	color: var(--aide-text-secondary);
+	max-width: 260px;
+}
+
+.aide-empty-state-description p {
+	margin: 0 0 var(--aide-space-lg) 0;
+	font-size: 13px;
+	line-height: 1.6;
+}
+
+.aide-hints {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: var(--aide-space-lg);
+	margin-top: var(--aide-space-sm);
+}
+
+.aide-hints .hint {
+	display: flex;
+	align-items: center;
+	gap: var(--aide-space-sm);
+	font-size: 12px;
+	color: var(--aide-text-muted);
+}
+
+.aide-hints .key {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 22px;
+	height: 22px;
+	padding: 0 var(--aide-space-sm);
+	background: var(--aide-bg-elevated);
+	border: 1px solid var(--aide-border-default);
+	border-radius: var(--aide-radius-sm);
+	font-family: var(--aide-font-mono);
+	font-size: 11px;
+	font-weight: 500;
+	color: var(--aide-text-secondary);
+}
+
+/* ============================================================================
+   Messages Area
    ============================================================================ */
 
 .aide-composer-messages {
 	flex: 1;
 	overflow-y: auto;
 	overflow-x: hidden;
-	padding: 20px;
+	padding: var(--aide-space-lg);
 	display: flex;
 	flex-direction: column;
-	gap: 20px;
-	scroll-behavior: smooth;
-	background: var(--bat-gradient-subtle);
+	gap: var(--aide-space-lg);
 }
 
 .aide-composer-messages::-webkit-scrollbar {
@@ -171,136 +303,121 @@
 }
 
 .aide-composer-messages::-webkit-scrollbar-thumb {
-	background: var(--bat-border);
+	background: var(--aide-border-default);
 	border-radius: 3px;
 }
 
 .aide-composer-messages::-webkit-scrollbar-thumb:hover {
-	background: var(--bat-blue);
-	box-shadow: var(--bat-glow-sm);
+	background: var(--aide-border-strong);
 }
 
 /* ============================================================================
-   Message Bubbles - Intel Reports
+   Message Bubbles
    ============================================================================ */
 
 .aide-message {
 	display: flex;
 	flex-direction: column;
-	gap: 10px;
-	padding: 16px 20px;
-	border-radius: var(--bat-radius-lg);
-	animation: messageReveal 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-	position: relative;
+	gap: var(--aide-space-sm);
+	animation: messageIn 0.3s ease;
 }
 
-@keyframes messageReveal {
+@keyframes messageIn {
 	from {
 		opacity: 0;
-		transform: translateY(20px) scale(0.98);
+		transform: translateY(8px);
 	}
 	to {
 		opacity: 1;
-		transform: translateY(0) scale(1);
+		transform: translateY(0);
 	}
 }
 
-/* User Messages */
-.aide-message-user {
-	background: var(--bat-elevated);
-	border: 1px solid var(--bat-border);
-	margin-left: 20px;
-}
-
-/* Assistant Messages - The AI Response */
-.aide-message-assistant {
-	background: linear-gradient(135deg, var(--bat-blue-dim) 0%, var(--bat-purple-dim) 100%);
-	border: 1px solid rgba(0, 212, 255, 0.2);
-	margin-right: 20px;
-	position: relative;
-	overflow: hidden;
-}
-
-/* Glowing accent line */
-.aide-message-assistant::before {
-	content: '';
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 3px;
-	height: 100%;
-	background: var(--bat-gradient);
-	box-shadow: var(--bat-glow-sm);
-}
-
-/* System Messages */
-.aide-message-system {
-	background: rgba(245, 158, 11, 0.1);
-	border: 1px solid rgba(245, 158, 11, 0.3);
-	font-size: 12px;
-	padding: 12px 16px;
+.aide-message-header {
+	display: flex;
+	align-items: center;
+	gap: var(--aide-space-sm);
 }
 
 .aide-message-role {
-	font-size: 10px;
-	font-weight: 800;
-	text-transform: uppercase;
-	letter-spacing: 1.5px;
+	font-size: 12px;
+	font-weight: 600;
 }
 
 .aide-message-user .aide-message-role {
-	color: var(--bat-text-secondary);
+	color: var(--aide-text-secondary);
 }
 
 .aide-message-assistant .aide-message-role {
-	color: var(--bat-blue);
-	text-shadow: 0 0 10px var(--bat-blue-glow);
+	color: var(--aide-accent);
 }
 
-.aide-message-system .aide-message-role {
-	color: var(--bat-amber);
+.aide-icon {
+	color: var(--aide-accent);
+}
+
+.aide-message-timestamp {
+	font-size: 11px;
+	color: var(--aide-text-muted);
+	margin-left: auto;
 }
 
 .aide-message-content {
-	font-size: 14px;
-	line-height: 1.7;
-	color: var(--bat-text);
-	word-wrap: break-word;
+	font-size: 13px;
+	line-height: 1.6;
+	color: var(--aide-text-primary);
+	padding: var(--aide-space-md) var(--aide-space-lg);
+	border-radius: var(--aide-radius-lg);
 	white-space: pre-wrap;
+	word-wrap: break-word;
 }
 
-/* Streaming Animation - The Batcomputer is thinking */
+.aide-message-user .aide-message-content {
+	background: var(--aide-bg-muted);
+	border: 1px solid var(--aide-border-subtle);
+}
+
+.aide-message-assistant .aide-message-content {
+	background: var(--aide-accent-subtle);
+	border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.aide-message-system .aide-message-content {
+	background: rgba(245, 158, 11, 0.1);
+	border: 1px solid rgba(245, 158, 11, 0.2);
+	font-size: 12px;
+}
+
+/* Streaming Cursor */
 .aide-message-content.streaming::after {
 	content: '';
 	display: inline-block;
-	width: 3px;
-	height: 18px;
-	background: var(--bat-blue);
-	margin-left: 4px;
-	animation: batCursor 0.8s infinite;
-	box-shadow: var(--bat-glow-sm);
+	width: 2px;
+	height: 16px;
+	background: var(--aide-accent);
+	margin-left: 2px;
+	animation: blink 1s infinite;
 	border-radius: 1px;
 }
 
-@keyframes batCursor {
+@keyframes blink {
 	0%, 50% { opacity: 1; }
 	51%, 100% { opacity: 0; }
 }
 
 /* ============================================================================
-   Attachments - Evidence Files
+   Attachments
    ============================================================================ */
 
 .aide-composer-attachments,
 .aide-message-attachments {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 8px;
+	gap: var(--aide-space-sm);
 }
 
 .aide-composer-attachments {
-	padding: 0 16px 12px;
-	min-height: 0;
+	padding: 0 var(--aide-space-lg) var(--aide-space-md);
 }
 
 .aide-composer-attachments:empty {
@@ -310,109 +427,103 @@
 .aide-attachment-chip {
 	display: inline-flex;
 	align-items: center;
-	gap: 8px;
-	padding: 6px 12px;
-	background: var(--bat-elevated);
-	border: 1px solid var(--bat-border);
-	border-radius: 20px;
+	gap: var(--aide-space-sm);
+	padding: var(--aide-space-xs) var(--aide-space-md);
+	background: var(--aide-bg-muted);
+	border: 1px solid var(--aide-border-default);
+	border-radius: var(--aide-radius-full);
 	font-size: 12px;
-	font-weight: 500;
-	color: var(--bat-text-secondary);
-	transition: all var(--bat-transition);
+	color: var(--aide-text-secondary);
+	transition: all var(--aide-transition-fast);
 }
 
 .aide-attachment-chip:hover {
-	background: var(--bat-hover);
-	border-color: var(--bat-blue);
-	color: var(--bat-blue);
-	box-shadow: var(--bat-glow-sm);
+	background: var(--aide-bg-elevated);
+	border-color: var(--aide-border-strong);
+}
+
+.aide-attachment-chip .icon {
+	font-size: 14px;
 }
 
 .aide-attachment-chip .remove {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 16px;
+	height: 16px;
+	margin-left: var(--aide-space-xs);
+	border-radius: var(--aide-radius-full);
 	cursor: pointer;
 	opacity: 0.5;
-	font-size: 14px;
-	transition: all var(--bat-transition);
+	transition: all var(--aide-transition-fast);
 }
 
 .aide-attachment-chip .remove:hover {
 	opacity: 1;
-	color: var(--bat-red);
+	background: var(--aide-error);
+	color: white;
 }
 
 /* ============================================================================
-   Input Area - The Command Line
+   Input Area
    ============================================================================ */
 
 .aide-composer-input {
+	flex-shrink: 0;
 	display: flex;
 	flex-direction: column;
-	gap: 12px;
-	padding: 16px;
-	background: linear-gradient(180deg, var(--bat-dark) 0%, var(--bat-surface) 100%);
-	border-top: 1px solid var(--bat-border);
-	position: relative;
-}
-
-/* Glow line at top */
-.aide-composer-input::before {
-	content: '';
-	position: absolute;
-	top: 0;
-	left: 16px;
-	right: 16px;
-	height: 1px;
-	background: linear-gradient(90deg, transparent, var(--bat-blue), transparent);
-	opacity: 0.3;
+	gap: var(--aide-space-md);
+	padding: var(--aide-space-lg);
+	background: var(--aide-bg-subtle);
+	border-top: 1px solid var(--aide-border-subtle);
 }
 
 .aide-input-buttons {
 	display: flex;
-	gap: 8px;
+	gap: var(--aide-space-sm);
 }
 
 .aide-button {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	width: 36px;
-	height: 36px;
+	width: 32px;
+	height: 32px;
 	padding: 0;
-	background: var(--bat-elevated);
-	border: 1px solid var(--bat-border);
-	border-radius: var(--bat-radius);
-	color: var(--bat-text-secondary);
-	font-size: 15px;
+	background: var(--aide-bg-muted);
+	border: 1px solid var(--aide-border-default);
+	border-radius: var(--aide-radius-md);
+	color: var(--aide-text-secondary);
+	font-size: 14px;
 	cursor: pointer;
-	transition: all var(--bat-transition);
+	transition: all var(--aide-transition-fast);
 }
 
 .aide-button:hover {
-	background: var(--bat-hover);
-	border-color: var(--bat-blue);
-	color: var(--bat-blue);
-	transform: translateY(-2px);
-	box-shadow: var(--bat-glow-sm);
+	background: var(--aide-bg-elevated);
+	border-color: var(--aide-border-strong);
+	color: var(--aide-text-primary);
 }
 
 .aide-button:active {
-	transform: translateY(0);
+	transform: scale(0.95);
 }
 
 .aide-input-wrapper {
 	display: flex;
 	align-items: flex-end;
-	gap: 12px;
-	background: var(--bat-elevated);
-	border: 1px solid var(--bat-border);
-	border-radius: var(--bat-radius-lg);
-	padding: 12px 16px;
-	transition: all var(--bat-transition);
+	gap: var(--aide-space-md);
+	background: var(--aide-bg-muted);
+	border: 1px solid var(--aide-border-default);
+	border-radius: var(--aide-radius-lg);
+	padding: var(--aide-space-md);
+	transition: all var(--aide-transition-fast);
 }
 
 .aide-input-wrapper:focus-within {
-	border-color: var(--bat-blue);
-	box-shadow: var(--bat-glow), inset 0 0 30px rgba(0, 212, 255, 0.05);
+	border-color: var(--aide-accent);
+	box-shadow: 0 0 0 2px var(--aide-accent-subtle);
 }
 
 .aide-input-wrapper .monaco-inputbox {
@@ -424,315 +535,197 @@
 .aide-input-wrapper .monaco-inputbox .input,
 .aide-input-wrapper .monaco-inputbox .mirror {
 	background: transparent !important;
-	color: var(--bat-text) !important;
-	font-size: 14px;
-	padding: 4px 0;
+	color: var(--aide-text-primary) !important;
+	font-size: 13px;
+	padding: var(--aide-space-xs) 0;
 	line-height: 1.5;
 }
 
 .aide-input-wrapper .monaco-inputbox .input::placeholder {
-	color: var(--bat-text-muted);
-	font-style: italic;
+	color: var(--aide-text-placeholder);
 }
 
-/* Send Button - Execute */
+/* Action Buttons */
+.aide-action-buttons {
+	display: flex;
+	gap: var(--aide-space-sm);
+}
+
 .aide-send-button {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	padding: 10px 24px !important;
-	background: var(--bat-gradient) !important;
+	width: 36px !important;
+	height: 36px !important;
+	padding: 0 !important;
+	background: var(--aide-accent) !important;
 	border: none !important;
-	border-radius: var(--bat-radius) !important;
-	color: var(--bat-black) !important;
-	font-size: 12px !important;
-	font-weight: 700 !important;
-	letter-spacing: 1px;
-	text-transform: uppercase;
+	border-radius: var(--aide-radius-md) !important;
+	color: white !important;
+	font-size: 14px !important;
 	cursor: pointer;
-	transition: all var(--bat-transition);
-	position: relative;
-	overflow: hidden;
-}
-
-.aide-send-button::before {
-	content: '';
-	position: absolute;
-	inset: 0;
-	background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-	transform: translateX(-100%);
-	transition: transform 0.5s;
+	transition: all var(--aide-transition-fast);
 }
 
 .aide-send-button:hover {
-	transform: translateY(-2px);
-	box-shadow: var(--bat-glow);
-}
-
-.aide-send-button:hover::before {
-	transform: translateX(100%);
+	background: var(--aide-accent-hover) !important;
+	transform: scale(1.05);
 }
 
 .aide-send-button:active {
-	transform: translateY(0);
+	transform: scale(0.95);
+}
+
+.aide-stop-button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 36px !important;
+	height: 36px !important;
+	padding: 0 !important;
+	background: var(--aide-error) !important;
+	border: none !important;
+	border-radius: var(--aide-radius-md) !important;
+	color: white !important;
+	font-size: 12px !important;
+	cursor: pointer;
+	transition: all var(--aide-transition-fast);
+}
+
+.aide-stop-button:hover {
+	transform: scale(1.05);
 }
 
 /* ============================================================================
-   Empty State - Awaiting Orders
+   @ Mention Dropdown
    ============================================================================ */
 
-.aide-empty-state {
+.aide-mention-dropdown {
+	position: absolute;
+	bottom: 100px;
+	left: var(--aide-space-lg);
+	right: var(--aide-space-lg);
+	max-height: 280px;
+	background: var(--aide-bg-elevated);
+	border: 1px solid var(--aide-border-default);
+	border-radius: var(--aide-radius-lg);
+	box-shadow: var(--aide-shadow-lg);
+	overflow: hidden;
+	z-index: 100;
+}
+
+.aide-mention-item {
 	display: flex;
-	flex-direction: column;
 	align-items: center;
-	justify-content: center;
-	flex: 1;
-	padding: 48px 24px;
+	gap: var(--aide-space-md);
+	padding: var(--aide-space-md) var(--aide-space-lg);
+	cursor: pointer;
+	transition: background var(--aide-transition-fast);
+}
+
+.aide-mention-item:hover,
+.aide-mention-item.selected {
+	background: var(--aide-accent-subtle);
+}
+
+.aide-mention-item .icon {
+	font-size: 16px;
+	width: 24px;
 	text-align: center;
 }
 
-.aide-empty-state-icon {
-	font-size: 64px;
-	margin-bottom: 24px;
-	opacity: 0.2;
-	filter: drop-shadow(0 0 20px var(--bat-blue));
-}
-
-.aide-empty-state-title {
-	font-size: 20px;
-	font-weight: 700;
-	color: var(--bat-text);
-	margin-bottom: 8px;
-	text-transform: uppercase;
-	letter-spacing: 2px;
-}
-
-.aide-empty-state-description {
-	font-size: 14px;
-	color: var(--bat-text-muted);
-	max-width: 280px;
-	line-height: 1.6;
-}
-
-/* ============================================================================
-   Code Blocks - Technical Readouts
-   ============================================================================ */
-
-.aide-message-content pre {
-	background: var(--bat-void);
-	border: 1px solid var(--bat-border);
-	border-radius: var(--bat-radius);
-	padding: 16px;
-	margin: 12px 0;
-	overflow-x: auto;
-	position: relative;
-}
-
-.aide-message-content pre::before {
-	content: '';
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 1px;
-	background: var(--bat-gradient);
-	opacity: 0.5;
-}
-
-.aide-message-content code {
-	font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', Consolas, monospace;
+.aide-mention-item .label {
+	font-weight: 600;
+	color: var(--aide-accent);
+	font-family: var(--aide-font-mono);
 	font-size: 13px;
 }
 
-.aide-message-content :not(pre) > code {
-	background: var(--bat-elevated);
-	padding: 2px 8px;
-	border-radius: 4px;
-	font-size: 0.9em;
-	color: var(--bat-cyan);
+.aide-mention-item .description {
+	color: var(--aide-text-muted);
+	font-size: 12px;
+	margin-left: auto;
 }
 
 /* ============================================================================
-   Tool Calls - Mission Operations
+   Status Bar
    ============================================================================ */
+
+.aide-status-bar {
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	gap: var(--aide-space-sm);
+	padding: var(--aide-space-sm) var(--aide-space-lg);
+	background: var(--aide-bg-base);
+	border-top: 1px solid var(--aide-border-subtle);
+	font-size: 11px;
+	font-weight: 500;
+	color: var(--aide-text-muted);
+}
+
+/* ============================================================================
+   Tool Calls
+   ============================================================================ */
+
+.aide-tool-calls {
+	display: flex;
+	flex-direction: column;
+	gap: var(--aide-space-sm);
+	margin-top: var(--aide-space-sm);
+}
 
 .aide-tool-call {
 	display: flex;
 	align-items: center;
-	gap: 10px;
-	padding: 10px 14px;
-	background: rgba(16, 185, 129, 0.1);
-	border: 1px solid rgba(16, 185, 129, 0.3);
-	border-left: 3px solid var(--bat-green);
-	border-radius: var(--bat-radius);
-	margin: 10px 0;
+	gap: var(--aide-space-sm);
+	padding: var(--aide-space-sm) var(--aide-space-md);
+	background: rgba(34, 197, 94, 0.1);
+	border: 1px solid rgba(34, 197, 94, 0.2);
+	border-radius: var(--aide-radius-md);
 	font-size: 12px;
-	font-family: 'JetBrains Mono', monospace;
+	font-family: var(--aide-font-mono);
 }
 
 .aide-tool-call-icon {
-	color: var(--bat-green);
-	text-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+	color: var(--aide-success);
 }
 
 .aide-tool-call-name {
-	font-weight: 700;
-	color: var(--bat-green);
+	font-weight: 600;
+	color: var(--aide-success);
 }
 
 .aide-tool-call-args {
-	color: var(--bat-text-secondary);
-}
-
-/* ============================================================================
-   Thinking State - Processing
-   ============================================================================ */
-
-.aide-thinking {
-	display: flex;
-	align-items: center;
-	gap: 12px;
-	padding: 16px 20px;
-	color: var(--bat-text-secondary);
-	font-size: 13px;
-	font-weight: 500;
-	text-transform: uppercase;
-	letter-spacing: 1px;
-}
-
-.aide-thinking-dots {
-	display: flex;
-	gap: 6px;
-}
-
-.aide-thinking-dots span {
-	width: 8px;
-	height: 8px;
-	background: var(--bat-blue);
-	border-radius: 50%;
-	animation: batPulse 1.4s infinite ease-in-out both;
-	box-shadow: 0 0 10px var(--bat-blue-glow);
-}
-
-.aide-thinking-dots span:nth-child(1) { animation-delay: 0s; }
-.aide-thinking-dots span:nth-child(2) { animation-delay: 0.2s; }
-.aide-thinking-dots span:nth-child(3) { animation-delay: 0.4s; }
-
-@keyframes batPulse {
-	0%, 80%, 100% {
-		transform: scale(0.6);
-		opacity: 0.4;
-	}
-	40% {
-		transform: scale(1.2);
-		opacity: 1;
-		box-shadow: 0 0 20px var(--bat-blue-glow);
-	}
-}
-
-/* ============================================================================
-   Diff Preview - Change Detection
-   ============================================================================ */
-
-.aide-diff-preview {
-	margin: 12px 0;
-	border-radius: var(--bat-radius);
+	color: var(--aide-text-muted);
 	overflow: hidden;
-	border: 1px solid var(--bat-border);
-	font-family: 'JetBrains Mono', monospace;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+/* ============================================================================
+   Code Styling
+   ============================================================================ */
+
+.aide-message-content pre {
+	background: var(--aide-bg-base);
+	border: 1px solid var(--aide-border-default);
+	border-radius: var(--aide-radius-md);
+	padding: var(--aide-space-md);
+	margin: var(--aide-space-md) 0;
+	overflow-x: auto;
+}
+
+.aide-message-content code {
+	font-family: var(--aide-font-mono);
 	font-size: 12px;
 }
 
-.aide-diff-line {
-	padding: 4px 12px;
-	white-space: pre;
-}
-
-.aide-diff-line.added {
-	background: rgba(16, 185, 129, 0.15);
-	border-left: 3px solid var(--bat-green);
-	color: var(--bat-green);
-}
-
-.aide-diff-line.removed {
-	background: rgba(239, 68, 68, 0.15);
-	border-left: 3px solid var(--bat-red);
-	color: var(--bat-red);
-	text-decoration: line-through;
-}
-
-.aide-diff-line.unchanged {
-	color: var(--bat-text-muted);
-}
-
-/* ============================================================================
-   Mode Indicator Badges
-   ============================================================================ */
-
-.aide-mode-badge {
-	display: inline-flex;
-	align-items: center;
-	gap: 6px;
-	padding: 4px 10px;
-	border-radius: 12px;
-	font-size: 10px;
-	font-weight: 700;
-	text-transform: uppercase;
-	letter-spacing: 1px;
-}
-
-.aide-mode-badge.agent {
-	background: var(--bat-blue-dim);
-	color: var(--bat-blue);
-	border: 1px solid rgba(0, 212, 255, 0.3);
-}
-
-.aide-mode-badge.plan {
-	background: var(--bat-purple-dim);
-	color: var(--bat-purple);
-	border: 1px solid rgba(168, 85, 247, 0.3);
-}
-
-/* ============================================================================
-   Status Indicators
-   ============================================================================ */
-
-.aide-status {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	padding: 8px 12px;
-	font-size: 11px;
-	font-weight: 600;
-	text-transform: uppercase;
-	letter-spacing: 1px;
-}
-
-.aide-status-dot {
-	width: 8px;
-	height: 8px;
-	border-radius: 50%;
-	animation: statusPulse 2s infinite;
-}
-
-.aide-status-dot.active {
-	background: var(--bat-green);
-	box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
-}
-
-.aide-status-dot.processing {
-	background: var(--bat-blue);
-	box-shadow: 0 0 10px var(--bat-blue-glow);
-}
-
-.aide-status-dot.error {
-	background: var(--bat-red);
-	box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
-}
-
-@keyframes statusPulse {
-	0%, 100% { opacity: 1; }
-	50% { opacity: 0.5; }
+.aide-message-content :not(pre) > code {
+	background: var(--aide-bg-muted);
+	padding: 2px 6px;
+	border-radius: var(--aide-radius-sm);
+	font-size: 0.9em;
 }
 
 /* ============================================================================
@@ -744,244 +737,38 @@
 	height: 100%;
 }
 
-/* Override Monaco defaults in our container */
-.aide-composer .monaco-select-box-dropdown-padding {
-	background: var(--bat-elevated) !important;
+.auxiliary-bar .pane-header,
+.pane-body .pane-header {
+	display: none !important;
 }
 
 /* ============================================================================
-   Header Title Section
-   ============================================================================ */
-
-.aide-header-title {
-	display: flex;
-	align-items: center;
-	gap: 12px;
-	padding-bottom: 12px;
-	border-bottom: 1px solid var(--bat-border);
-	margin-bottom: 12px;
-}
-
-.aide-header-title h2 {
-	font-size: 16px;
-	font-weight: 800;
-	color: var(--bat-text);
-	margin: 0;
-	letter-spacing: 2px;
-	text-transform: uppercase;
-}
-
-.aide-logo {
-	color: var(--bat-blue);
-	text-shadow: 0 0 15px var(--bat-blue-glow);
-	animation: logoPulse 3s infinite;
-}
-
-@keyframes logoPulse {
-	0%, 100% { opacity: 1; }
-	50% { opacity: 0.7; }
-}
-
-.aide-header-controls {
-	display: flex;
-	gap: 16px;
-}
-
-/* ============================================================================
-   @ Mention Dropdown
-   ============================================================================ */
-
-.aide-mention-dropdown {
-	position: absolute;
-	bottom: 120px;
-	left: 16px;
-	right: 16px;
-	max-height: 300px;
-	background: var(--bat-surface);
-	border: 1px solid var(--bat-blue);
-	border-radius: var(--bat-radius-lg);
-	box-shadow: var(--bat-glow), 0 10px 40px rgba(0, 0, 0, 0.5);
-	overflow-y: auto;
-	z-index: 100;
-}
-
-.aide-mention-item {
-	display: flex;
-	align-items: center;
-	gap: 12px;
-	padding: 12px 16px;
-	cursor: pointer;
-	transition: all var(--bat-transition);
-}
-
-.aide-mention-item:hover,
-.aide-mention-item.selected {
-	background: var(--bat-blue-dim);
-}
-
-.aide-mention-item .icon {
-	font-size: 18px;
-	width: 24px;
-	text-align: center;
-}
-
-.aide-mention-item .label {
-	font-weight: 600;
-	color: var(--bat-blue);
-	font-family: 'JetBrains Mono', monospace;
-}
-
-.aide-mention-item .description {
-	color: var(--bat-text-secondary);
-	font-size: 12px;
-	margin-left: auto;
-}
-
-/* ============================================================================
-   Status Bar
-   ============================================================================ */
-
-.aide-status-bar {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	padding: 8px 16px;
-	background: var(--bat-void);
-	border-top: 1px solid var(--bat-border);
-	font-size: 10px;
-	font-weight: 700;
-	text-transform: uppercase;
-	letter-spacing: 1.5px;
-	color: var(--bat-text-secondary);
-}
-
-/* ============================================================================
-   Action Buttons (Send/Stop)
-   ============================================================================ */
-
-.aide-action-buttons {
-	display: flex;
-	gap: 8px;
-}
-
-.aide-stop-button {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	width: 40px !important;
-	height: 40px !important;
-	padding: 0 !important;
-	background: var(--bat-red) !important;
-	border: none !important;
-	border-radius: var(--bat-radius) !important;
-	color: white !important;
-	font-size: 14px !important;
-	cursor: pointer;
-	transition: all var(--bat-transition);
-}
-
-.aide-stop-button:hover {
-	transform: scale(1.05);
-	box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
-}
-
-/* ============================================================================
-   Empty State Enhancements
-   ============================================================================ */
-
-.aide-hints {
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: center;
-	gap: 16px;
-	margin-top: 20px;
-}
-
-.aide-hints .hint {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	font-size: 12px;
-	color: var(--bat-text-secondary);
-}
-
-.aide-hints .key {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	min-width: 24px;
-	height: 24px;
-	padding: 0 8px;
-	background: var(--bat-elevated);
-	border: 1px solid var(--bat-border);
-	border-radius: 4px;
-	font-family: 'JetBrains Mono', monospace;
-	font-size: 11px;
-	color: var(--bat-blue);
-}
-
-/* ============================================================================
-   Message Header
-   ============================================================================ */
-
-.aide-message-header {
-	display: flex;
-	align-items: center;
-	gap: 12px;
-	margin-bottom: 8px;
-}
-
-.aide-message-timestamp {
-	font-size: 10px;
-	color: var(--bat-text-muted);
-}
-
-.aide-icon {
-	color: var(--bat-blue);
-	text-shadow: 0 0 10px var(--bat-blue-glow);
-}
-
-/* ============================================================================
-   Tool Calls Container
-   ============================================================================ */
-
-.aide-tool-calls {
-	display: flex;
-	flex-direction: column;
-	gap: 8px;
-	margin-top: 12px;
-}
-
-/* ============================================================================
-   High Contrast Mode
+   High Contrast Support
    ============================================================================ */
 
 .hc-black .aide-composer,
 .hc-black .aide-composer-container {
-	--bat-border: var(--bat-blue);
+	--aide-border-default: rgba(255, 255, 255, 0.3);
+	--aide-border-strong: rgba(255, 255, 255, 0.5);
 }
 
 /* ============================================================================
-   Send Button Enhancement
+   Light Theme Support
    ============================================================================ */
 
-.aide-send-button {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	width: 40px !important;
-	height: 40px !important;
-	padding: 0 !important;
-	background: var(--bat-gradient) !important;
-	border: none !important;
-	border-radius: var(--bat-radius) !important;
-	color: var(--bat-black) !important;
-	font-size: 16px !important;
-	cursor: pointer;
-	transition: all var(--bat-transition);
-}
+.vs .aide-composer,
+.vs .aide-composer-container {
+	--aide-bg-base: #ffffff;
+	--aide-bg-subtle: #fafafa;
+	--aide-bg-muted: #f4f4f5;
+	--aide-bg-elevated: #e4e4e7;
 
-.aide-send-button:hover {
-	transform: scale(1.05);
-	box-shadow: var(--bat-glow);
+	--aide-border-subtle: rgba(0, 0, 0, 0.06);
+	--aide-border-default: rgba(0, 0, 0, 0.1);
+	--aide-border-strong: rgba(0, 0, 0, 0.15);
+
+	--aide-text-primary: #18181b;
+	--aide-text-secondary: #52525b;
+	--aide-text-muted: #a1a1aa;
+	--aide-text-placeholder: #d4d4d8;
 }
