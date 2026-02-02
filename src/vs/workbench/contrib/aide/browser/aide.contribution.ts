@@ -1,10 +1,10 @@
 /*---------------------------------------------------------------------------------------------
- *  Copyright (c) Microsoft Corporation. All rights reserved.
- *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *  AIDE - AI Development Environment
+ *  Licensed under the MIT License.
  *--------------------------------------------------------------------------------------------*/
 
 import { Disposable } from '../../../../base/common/lifecycle.js';
-import { localize } from '../../../../nls.js';
+import { localize, localize2 } from '../../../../nls.js';
 import { InstantiationType, registerSingleton } from '../../../../platform/instantiation/common/extensions.js';
 import { Registry } from '../../../../platform/registry/common/platform.js';
 import { Extensions as ConfigurationExtensions, IConfigurationRegistry } from '../../../../platform/configuration/common/configurationRegistry.js';
@@ -15,13 +15,53 @@ import { AideContextService } from '../../../services/aide/browser/aideContextSe
 import { OpenAIProvider } from '../../../services/aide/browser/providers/openaiProvider.js';
 import { AnthropicProvider } from '../../../services/aide/browser/providers/anthropicProvider.js';
 import { OllamaProvider } from '../../../services/aide/browser/providers/ollamaProvider.js';
-import { IInstantiationService } from '../../../../platform/instantiation/common/instantiation.js';
+import { IInstantiationService, ServicesAccessor } from '../../../../platform/instantiation/common/instantiation.js';
 import { IWorkbenchContribution, IWorkbenchContributionsRegistry, Extensions as WorkbenchExtensions } from '../../../common/contributions.js';
 import { LifecyclePhase } from '../../../services/lifecycle/common/lifecycle.js';
 import { KeybindingsRegistry, KeybindingWeight } from '../../../../platform/keybinding/common/keybindingsRegistry.js';
 import { KeyCode, KeyMod } from '../../../../base/common/keyCodes.js';
 import { CommandsRegistry } from '../../../../platform/commands/common/commands.js';
-import { ServicesAccessor } from '../../../../platform/instantiation/common/instantiation.js';
+import { ViewPaneContainer } from '../../../browser/parts/views/viewPaneContainer.js';
+import { SyncDescriptor } from '../../../../platform/instantiation/common/descriptors.js';
+import { ViewContainer, IViewContainersRegistry, ViewContainerLocation, Extensions as ViewExtensions, IViewsRegistry } from '../../../common/views.js';
+import { ComposerViewPane } from './composer/composerViewPane.js';
+import { IViewsService } from '../../../services/views/common/viewsService.js';
+import { Codicon } from '../../../../base/common/codicons.js';
+import { registerIcon } from '../../../../platform/theme/common/iconRegistry.js';
+
+// ============================================================================
+// Icons
+// ============================================================================
+
+const aideViewIcon = registerIcon('aide-view-icon', Codicon.sparkle, localize('aideViewIcon', 'AIDE view icon'));
+
+// ============================================================================
+// View Container
+// ============================================================================
+
+const VIEW_CONTAINER: ViewContainer = Registry.as<IViewContainersRegistry>(ViewExtensions.ViewContainersRegistry).registerViewContainer({
+	id: 'workbench.view.aide',
+	title: localize2('aide', 'AIDE'),
+	icon: aideViewIcon,
+	order: 0, // First in sidebar
+	ctorDescriptor: new SyncDescriptor(ViewPaneContainer, ['workbench.view.aide', { mergeViewWithContainerWhenSingleView: true }]),
+	storageId: 'workbench.view.aide.state',
+	hideIfEmpty: false,
+}, ViewContainerLocation.AuxiliaryBar, { doNotRegisterOpenCommand: true, isDefault: true });
+
+// ============================================================================
+// Views
+// ============================================================================
+
+Registry.as<IViewsRegistry>(ViewExtensions.ViewsRegistry).registerViews([{
+	id: ComposerViewPane.ID,
+	name: localize2('aideComposer', 'AIDE Composer'),
+	containerIcon: aideViewIcon,
+	ctorDescriptor: new SyncDescriptor(ComposerViewPane),
+	canToggleVisibility: false,
+	canMoveView: true,
+	order: 0,
+}], VIEW_CONTAINER);
 
 // ============================================================================
 // Register Services
@@ -71,7 +111,7 @@ configurationRegistry.registerConfiguration({
 		'aide.defaultModel': {
 			type: 'string',
 			default: '',
-			description: localize('aide.defaultModel', "Default model to use for AI features")
+			description: localize('aide.defaultModel', "Default model to use (e.g., 'openai/gpt-4o', 'anthropic/claude-3-5-sonnet', 'ollama/llama3.2')")
 		},
 		'aide.tabCompletion.enabled': {
 			type: 'boolean',
@@ -102,6 +142,11 @@ configurationRegistry.registerConfiguration({
 			type: 'boolean',
 			default: true,
 			description: localize('aide.chat.streamResponses', "Stream AI responses in chat")
+		},
+		'aide.agent.autoApprove': {
+			type: 'boolean',
+			default: false,
+			description: localize('aide.agent.autoApprove', "Auto-approve file changes in Agent mode (use with caution)")
 		}
 	}
 });
@@ -111,14 +156,21 @@ configurationRegistry.registerConfiguration({
 // ============================================================================
 
 // Open Composer command
-CommandsRegistry.registerCommand('aide.openComposer', (accessor: ServicesAccessor) => {
-	// TODO: Open the composer panel
+CommandsRegistry.registerCommand('aide.openComposer', async (accessor: ServicesAccessor) => {
+	const viewsService = accessor.get(IViewsService);
+	await viewsService.openView(ComposerViewPane.ID, true);
 });
 
 // New Agent command
 CommandsRegistry.registerCommand('aide.newAgent', async (accessor: ServicesAccessor) => {
 	const aideService = accessor.get(IAideService);
+	const viewsService = accessor.get(IViewsService);
+
+	// Create new agent
 	await aideService.createAgent();
+
+	// Open composer if not visible
+	await viewsService.openView(ComposerViewPane.ID, true);
 });
 
 // Toggle mode commands
@@ -175,7 +227,7 @@ KeybindingsRegistry.registerKeybindingRule({
 KeybindingsRegistry.registerKeybindingRule({
 	id: 'aide.newAgent',
 	weight: KeybindingWeight.WorkbenchContrib,
-	primary: KeyMod.CtrlCmd | KeyCode.KeyN,
+	primary: KeyMod.CtrlCmd | KeyMod.Shift | KeyCode.KeyI,
 	when: undefined,
 });
 

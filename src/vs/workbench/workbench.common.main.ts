@@ -130,8 +130,9 @@ import './services/userAttention/browser/userAttentionBrowser.js';
 import './services/editor/browser/editorPaneService.js';
 import './services/editor/common/customEditorLabelService.js';
 import './services/dataChannel/browser/dataChannelService.js';
-import './services/inlineCompletions/common/inlineCompletionsUnification.js';
-import './services/chat/common/chatEntitlementService.js';
+// AIDE: Disabled Microsoft inline completions and chat entitlements
+// import './services/inlineCompletions/common/inlineCompletionsUnification.js';
+// import './services/chat/common/chatEntitlementService.js';
 import './services/log/common/defaultLogLevels.js';
 
 import { InstantiationType, registerSingleton } from '../platform/instantiation/common/extensions.js';
@@ -185,11 +186,15 @@ registerSingleton(IAllowedMcpServersService, AllowedMcpServersService, Instantia
 
 //#region --- workbench contributions
 
-// Default Account
-import './services/accounts/browser/defaultAccount.js';
+// =============================================================================
+// AIDE: Stripped Microsoft/Copilot integrations for clean AI-native experience
+// =============================================================================
 
-// Telemetry
-import './contrib/telemetry/browser/telemetry.contribution.js';
+// Default Account - DISABLED (was causing errors, not needed for AIDE)
+// import './services/accounts/browser/defaultAccount.js';
+
+// Telemetry - DISABLED (privacy-focused)
+// import './contrib/telemetry/browser/telemetry.contribution.js';
 
 // Preferences
 import './contrib/preferences/browser/preferences.contribution.js';
@@ -199,24 +204,24 @@ import './contrib/preferences/browser/preferencesSearch.js';
 // Performance
 import './contrib/performance/browser/performance.contribution.js';
 
-// Notebook
-import './contrib/notebook/browser/notebook.contribution.js';
+// Notebook - DISABLED (large, re-enable if needed)
+// import './contrib/notebook/browser/notebook.contribution.js';
 
-// Speech
-import './contrib/speech/browser/speech.contribution.js';
+// Speech - DISABLED (not needed)
+// import './contrib/speech/browser/speech.contribution.js';
 
-// Chat
-import './contrib/chat/browser/chat.contribution.js';
-import './contrib/inlineChat/browser/inlineChat.contribution.js';
-import './contrib/mcp/browser/mcp.contribution.js';
-import './contrib/chat/browser/chatSessions/chatSessions.contribution.js';
-import './contrib/chat/browser/contextContrib/chatContext.contribution.js';
+// Microsoft Chat/Copilot - DISABLED (AIDE has its own)
+// import './contrib/chat/browser/chat.contribution.js';
+// import './contrib/inlineChat/browser/inlineChat.contribution.js';
+// import './contrib/mcp/browser/mcp.contribution.js';
+// import './contrib/chat/browser/chatSessions/chatSessions.contribution.js';
+// import './contrib/chat/browser/contextContrib/chatContext.contribution.js';
 
-// Interactive
-import './contrib/interactive/browser/interactive.contribution.js';
+// Interactive - DISABLED (Microsoft interactive editor)
+// import './contrib/interactive/browser/interactive.contribution.js';
 
-// repl
-import './contrib/replNotebook/browser/repl.contribution.js';
+// REPL Notebook - DISABLED
+// import './contrib/replNotebook/browser/repl.contribution.js';
 
 // Testing
 import './contrib/testing/browser/testing.contribution.js';
@@ -344,17 +349,17 @@ import './contrib/inlayHints/browser/inlayHintsAccessibilty.js';
 // Themes
 import './contrib/themes/browser/themes.contribution.js';
 
-// Update
-import './contrib/update/browser/update.contribution.js';
+// Update - DISABLED (we manage our own releases)
+// import './contrib/update/browser/update.contribution.js';
 
-// Surveys
-import './contrib/surveys/browser/nps.contribution.js';
-import './contrib/surveys/browser/languageSurveys.contribution.js';
+// Surveys - DISABLED (not needed)
+// import './contrib/surveys/browser/nps.contribution.js';
+// import './contrib/surveys/browser/languageSurveys.contribution.js';
 
-// Welcome
-import './contrib/welcomeGettingStarted/browser/gettingStarted.contribution.js';
-import './contrib/welcomeAgentSessions/browser/agentSessionsWelcome.contribution.js';
-import './contrib/welcomeWalkthrough/browser/walkThrough.contribution.js';
+// Welcome - DISABLED (will create AIDE-specific welcome)
+// import './contrib/welcomeGettingStarted/browser/gettingStarted.contribution.js';
+// import './contrib/welcomeAgentSessions/browser/agentSessionsWelcome.contribution.js';
+// import './contrib/welcomeWalkthrough/browser/walkThrough.contribution.js';
 import './contrib/welcomeViews/common/viewsWelcome.contribution.js';
 import './contrib/welcomeViews/common/newFile.contribution.js';
 
@@ -377,17 +382,17 @@ import './contrib/languageStatus/browser/languageStatus.contribution.js';
 // Authentication
 import './contrib/authentication/browser/authentication.contribution.js';
 
-// User Data Sync
-import './contrib/userDataSync/browser/userDataSync.contribution.js';
+// User Data Sync - DISABLED (Microsoft cloud sync)
+// import './contrib/userDataSync/browser/userDataSync.contribution.js';
 
 // User Data Profiles
 import './contrib/userDataProfile/browser/userDataProfile.contribution.js';
 
-// Continue Edit Session
-import './contrib/editSessions/browser/editSessions.contribution.js';
+// Continue Edit Session - DISABLED (Microsoft cloud feature)
+// import './contrib/editSessions/browser/editSessions.contribution.js';
 
-// Remote Coding Agents
-import './contrib/remoteCodingAgents/browser/remoteCodingAgents.contribution.js';
+// Remote Coding Agents - DISABLED (Microsoft remote agents)
+// import './contrib/remoteCodingAgents/browser/remoteCodingAgents.contribution.js';
 
 // Code Actions
 import './contrib/codeActions/browser/codeActions.contribution.js';
@@ -410,28 +415,33 @@ import './contrib/list/browser/list.contribution.js';
 // Accessibility Signals
 import './contrib/accessibilitySignals/browser/accessibilitySignal.contribution.js';
 
-// Bracket Pair Colorizer 2 Telemetry
-import './contrib/bracketPairColorizer2Telemetry/browser/bracketPairColorizer2Telemetry.contribution.js';
+// Bracket Pair Colorizer 2 Telemetry - DISABLED (telemetry)
+// import './contrib/bracketPairColorizer2Telemetry/browser/bracketPairColorizer2Telemetry.contribution.js';
 
 // Accessibility
 import './contrib/accessibility/browser/accessibility.contribution.js';
 
-// Share
-import './contrib/share/browser/share.contribution.js';
+// Share - DISABLED (not needed)
+// import './contrib/share/browser/share.contribution.js';
 
 // Synchronized Scrolling
 import './contrib/scrollLocking/browser/scrollLocking.contribution.js';
 
-// Inline Completions
-import './contrib/inlineCompletions/browser/inlineCompletions.contribution.js';
+// Inline Completions - DISABLED (AIDE has its own tab completion)
+// import './contrib/inlineCompletions/browser/inlineCompletions.contribution.js';
 
 // Drop or paste into
 import './contrib/dropOrPasteInto/browser/dropOrPasteInto.contribution.js';
 
-// Edit Telemetry
-import './contrib/editTelemetry/browser/editTelemetry.contribution.js';
+// Edit Telemetry - DISABLED (privacy)
+// import './contrib/editTelemetry/browser/editTelemetry.contribution.js';
 
 // Opener
 import './contrib/opener/browser/opener.contribution.js';
+
+// =============================================================================
+// AIDE: AI-Native IDE Features
+// =============================================================================
+import './contrib/aide/browser/aide.contribution.js';
 
 //#endregion

@@ -82,7 +82,34 @@ interface IMcpRegistryResponse {
 	readonly mcp_registries: ReadonlyArray<IMcpRegistryProvider>;
 }
 
-function toDefaultAccountConfig(defaultChatAgent: IDefaultChatAgent): IDefaultAccountConfig {
+function toDefaultAccountConfig(defaultChatAgent: IDefaultChatAgent | undefined): IDefaultAccountConfig {
+	// Handle missing or incomplete defaultChatAgent configuration
+	// AIDE uses custom AI providers, so this may not be fully configured
+	if (!defaultChatAgent?.provider) {
+		return {
+			preferredExtensions: defaultChatAgent ? [
+				defaultChatAgent.chatExtensionId,
+				defaultChatAgent.extensionId,
+			].filter(Boolean) : [],
+			authenticationProvider: {
+				default: {
+					id: '',
+					name: '',
+				},
+				enterprise: {
+					id: '',
+					name: '',
+				},
+				enterpriseProviderConfig: '',
+				enterpriseProviderUriSetting: '',
+				scopes: [],
+			},
+			entitlementUrl: '',
+			tokenEntitlementUrl: '',
+			mcpRegistryDataUrl: '',
+		};
+	}
+
 	return {
 		preferredExtensions: [
 			defaultChatAgent.chatExtensionId,

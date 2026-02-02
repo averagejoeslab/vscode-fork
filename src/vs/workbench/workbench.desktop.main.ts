@@ -60,6 +60,7 @@ import './services/imageResize/electron-browser/imageResizeService.js';
 import './services/browserElements/electron-browser/browserElementsService.js';
 import './services/secrets/electron-browser/secretStorageService.js';
 import './services/localization/electron-browser/languagePackService.js';
+// Telemetry Service (required as dependency, actual telemetry disabled in settings)
 import './services/telemetry/electron-browser/telemetryService.js';
 import './services/extensions/electron-browser/extensionHostStarter.js';
 import '../platform/extensionResourceLoader/common/extensionResourceLoaderService.js';
@@ -68,6 +69,7 @@ import './services/extensions/electron-browser/extensionsScannerService.js';
 import './services/extensionManagement/electron-browser/extensionManagementServerService.js';
 import './services/extensionManagement/electron-browser/extensionGalleryManifestService.js';
 import './services/extensionManagement/electron-browser/extensionTipsService.js';
+// User Data Sync Services (required as dependencies, actual sync disabled)
 import './services/userDataSync/electron-browser/userDataSyncService.js';
 import './services/userDataSync/electron-browser/userDataAutoSyncService.js';
 import './services/timer/electron-browser/timerService.js';
@@ -80,7 +82,8 @@ import './services/tunnel/electron-browser/tunnelService.js';
 import '../platform/diagnostics/electron-browser/diagnosticsService.js';
 import '../platform/profiling/electron-browser/profilingService.js';
 import '../platform/telemetry/electron-browser/customEndpointTelemetryService.js';
-import '../platform/remoteTunnel/electron-browser/remoteTunnelService.js';
+// AIDE: Disabled Microsoft remote tunnel
+// import '../platform/remoteTunnel/electron-browser/remoteTunnelService.js';
 import './services/files/electron-browser/elevatedFileService.js';
 import './services/search/electron-browser/searchService.js';
 import './services/workingCopy/electron-browser/workingCopyHistoryService.js';
@@ -122,8 +125,8 @@ import './contrib/debug/electron-browser/extensionHostDebugService.js';
 // Extensions Management
 import './contrib/extensions/electron-browser/extensions.contribution.js';
 
-// Issues
-import './contrib/issue/electron-browser/issue.contribution.js';
+// Issues - DISABLED (use AIDE GitHub repo)
+// import './contrib/issue/electron-browser/issue.contribution.js';
 
 // Process Explorer
 import './contrib/processExplorer/electron-browser/processExplorer.contribution.js';
@@ -137,8 +140,8 @@ import './contrib/terminal/electron-browser/terminal.contribution.js';
 // Themes
 import './contrib/themes/browser/themes.test.contribution.js';
 import './services/themes/electron-browser/themes.contribution.js';
-// User Data Sync
-import './contrib/userDataSync/electron-browser/userDataSync.contribution.js';
+// User Data Sync - DISABLED
+// import './contrib/userDataSync/electron-browser/userDataSync.contribution.js';
 
 // Tags
 import './contrib/tags/electron-browser/workspaceTagsService.js';
@@ -170,23 +173,24 @@ import './contrib/mergeEditor/electron-browser/mergeEditor.contribution.js';
 // Multi Diff Editor
 import './contrib/multiDiffEditor/browser/multiDiffEditor.contribution.js';
 
-// Remote Tunnel
-import './contrib/remoteTunnel/electron-browser/remoteTunnel.contribution.js';
+// Remote Tunnel - DISABLED (Microsoft tunnels)
+// import './contrib/remoteTunnel/electron-browser/remoteTunnel.contribution.js';
 
-// Chat
-import './contrib/chat/electron-browser/chat.contribution.js';
-import './contrib/inlineChat/electron-browser/inlineChat.contribution.js';
+// Microsoft Chat/Copilot - DISABLED (AIDE has its own)
+// import './contrib/chat/electron-browser/chat.contribution.js';
+// import './contrib/inlineChat/electron-browser/inlineChat.contribution.js';
+
 // Encryption
 import './contrib/encryption/electron-browser/encryption.contribution.js';
 
-// Emergency Alert
-import './contrib/emergencyAlert/electron-browser/emergencyAlert.contribution.js';
+// Emergency Alert - DISABLED
+// import './contrib/emergencyAlert/electron-browser/emergencyAlert.contribution.js';
 
-// MCP
-import './contrib/mcp/electron-browser/mcp.contribution.js';
+// Microsoft MCP - DISABLED (AIDE may implement its own)
+// import './contrib/mcp/electron-browser/mcp.contribution.js';
 
-// Policy Export
-import './contrib/policyExport/electron-browser/policyExport.contribution.js';
+// Policy Export - DISABLED
+// import './contrib/policyExport/electron-browser/policyExport.contribution.js';
 
 //#endregion
 

@@ -8,8 +8,15 @@ import { Emitter } from '../../../../base/common/event.js';
 import { Disposable, DisposableStore, IDisposable, toDisposable } from '../../../../base/common/lifecycle.js';
 import { generateUuid } from '../../../../base/common/uuid.js';
 import { IConfigurationService } from '../../../../platform/configuration/common/configuration.js';
+import { IFileService } from '../../../../platform/files/common/files.js';
+import { IInstantiationService } from '../../../../platform/instantiation/common/instantiation.js';
 import { ILogService } from '../../../../platform/log/common/log.js';
 import { IStorageService, StorageScope, StorageTarget } from '../../../../platform/storage/common/storage.js';
+import { IWorkspaceContextService } from '../../../../platform/workspace/common/workspace.js';
+import { ITerminalService } from '../../../contrib/terminal/browser/terminal.js';
+import { ISearchService, QueryType } from '../../search/common/search.js';
+import { URI } from '../../../../base/common/uri.js';
+import { VSBuffer } from '../../../../base/common/buffer.js';
 import {
 	AideMode,
 	AideMessageRole,
@@ -52,15 +59,19 @@ export class AideService extends Disposable implements IAideService {
 	constructor(
 		@ILogService private readonly _logService: ILogService,
 		@IStorageService private readonly _storageService: IStorageService,
-		@IConfigurationService _configurationService: IConfigurationService
+		@IConfigurationService _configurationService: IConfigurationService,
+		@IFileService private readonly _fileService: IFileService,
+		@IWorkspaceContextService private readonly _workspaceContextService: IWorkspaceContextService,
+		@ISearchService private readonly _searchService: ISearchService,
+		@IInstantiationService private readonly _instantiationService: IInstantiationService
 	) {
 		super();
 
 		this._loadAgents();
 		this._loadDefaultModel();
 
-		// Register built-in tools
-		this._registerBuiltInTools();
+		// Register built-in tools (deferred to allow terminal service to load)
+		setTimeout(() => this._registerBuiltInTools(), 100);
 	}
 
 	// ========================================================================
@@ -532,80 +543,357 @@ export class AideService extends Disposable implements IAideService {
 	}
 
 	private _registerBuiltInTools(): void {
-		// File read tool
+		// Read File Tool
 		this.registerTool(
 			{
 				name: 'read_file',
-				description: 'Read the contents of a file',
+				description: 'Read the contents of a file. Returns the file content with line numbers.',
 				parameters: {
 					type: 'object',
 					properties: {
-						path: { type: 'string', description: 'The path to the file to read' }
+						path: { type: 'string', description: 'The path to the file (relative to workspace root or absolute)' }
 					},
 					required: ['path']
 				}
 			},
 			async (args) => {
-				// Implementation will be handled by the context service
-				return `File read tool called with path: ${args.path}`;
+				try {
+					const path = args.path as string;
+					if (!path) {
+						return { error: 'Path is required' };
+					}
+
+					const uri = this._resolveUri(path);
+					const content = await this._fileService.readFile(uri);
+					const text = content.value.toString();
+					const lines = text.split('\n');
+
+					return {
+						path: uri.fsPath,
+						content: text,
+						lineCount: lines.length,
+						preview: lines.slice(0, 100).map((l, i) => `${i + 1}: ${l}`).join('\n')
+					};
+				} catch (error) {
+					return { error: `Failed to read file: ${error instanceof Error ? error.message : String(error)}` };
+				}
 			}
 		);
 
-		// File write tool
+		// Write File Tool
 		this.registerTool(
 			{
 				name: 'write_file',
-				description: 'Write content to a file',
+				description: 'Create or overwrite a file with the specified content.',
 				parameters: {
 					type: 'object',
 					properties: {
-						path: { type: 'string', description: 'The path to the file to write' },
-						content: { type: 'string', description: 'The content to write to the file' }
+						path: { type: 'string', description: 'The path to the file (relative or absolute)' },
+						content: { type: 'string', description: 'The complete content to write to the file' }
 					},
 					required: ['path', 'content']
 				}
 			},
 			async (args) => {
-				return `File write tool called with path: ${args.path}`;
+				try {
+					const path = args.path as string;
+					const content = args.content as string;
+
+					if (!path) { return { error: 'Path is required' }; }
+					if (content === undefined) { return { error: 'Content is required' }; }
+
+					const uri = this._resolveUri(path);
+					
+					// Check if exists
+					let existed = false;
+					try {
+						await this._fileService.stat(uri);
+						existed = true;
+					} catch { /* doesn't exist */ }
+
+					await this._fileService.writeFile(uri, VSBuffer.fromString(content));
+					this._logService.info(`[AIDE] Wrote file: ${uri.fsPath}`);
+
+					return {
+						success: true,
+						path: uri.fsPath,
+						action: existed ? 'updated' : 'created',
+						lineCount: content.split('\n').length
+					};
+				} catch (error) {
+					return { error: `Failed to write file: ${error instanceof Error ? error.message : String(error)}` };
+				}
 			}
 		);
 
-		// Search tool
+		// Edit File Tool (precise string replacement)
 		this.registerTool(
 			{
-				name: 'search_codebase',
-				description: 'Search the codebase for files or content',
+				name: 'edit_file',
+				description: 'Make a precise edit to a file by replacing specific content. Use this for small, targeted changes.',
 				parameters: {
 					type: 'object',
 					properties: {
-						query: { type: 'string', description: 'The search query' },
-						type: { type: 'string', description: 'Type of search', enum: ['semantic', 'lexical', 'filename'] }
+						path: { type: 'string', description: 'The path to the file' },
+						old_content: { type: 'string', description: 'The exact content to find and replace (must match exactly)' },
+						new_content: { type: 'string', description: 'The new content to replace it with' }
+					},
+					required: ['path', 'old_content', 'new_content']
+				}
+			},
+			async (args) => {
+				try {
+					const path = args.path as string;
+					const oldContent = args.old_content as string;
+					const newContent = args.new_content as string;
+
+					const uri = this._resolveUri(path);
+					const fileContent = await this._fileService.readFile(uri);
+					const currentContent = fileContent.value.toString();
+
+					if (!currentContent.includes(oldContent)) {
+						return {
+							error: 'Could not find the specified content to replace.',
+							hint: 'Make sure old_content matches exactly including whitespace and indentation.'
+						};
+					}
+
+										const updatedContent = currentContent.replace(oldContent, newContent);
+					await this._fileService.writeFile(uri, VSBuffer.fromString(updatedContent));
+
+					this._logService.info(`[AIDE] Edited file: ${uri.fsPath}`);
+					return { success: true, path: uri.fsPath };
+				} catch (error) {
+					return { error: `Failed to edit file: ${error instanceof Error ? error.message : String(error)}` };
+				}
+			}
+		);
+
+		// Search Codebase Tool
+		this.registerTool(
+			{
+				name: 'search_codebase',
+				description: 'Search the codebase for files or content. Use type=filename to find files by name, or type=content to search within files.',
+				parameters: {
+					type: 'object',
+					properties: {
+						query: { type: 'string', description: 'The search query or pattern' },
+						type: { type: 'string', description: 'Type of search', enum: ['content', 'filename'] },
+						file_pattern: { type: 'string', description: 'Optional glob pattern to filter files (e.g., "*.ts")' },
+						max_results: { type: 'number', description: 'Maximum number of results (default 20)' }
 					},
 					required: ['query']
 				}
 			},
 			async (args) => {
-				return `Search tool called with query: ${args.query}`;
+				try {
+					const query = args.query as string;
+					const searchType = (args.type as string) || 'content';
+					const maxResults = (args.max_results as number) || 20;
+					const filePattern = args.file_pattern as string | undefined;
+
+					const folders = this._workspaceContextService.getWorkspace().folders;
+					if (folders.length === 0) {
+						return { error: 'No workspace folder open' };
+					}
+
+					if (searchType === 'filename') {
+						const results = await this._searchService.fileSearch({
+							type: QueryType.File,
+							folderQueries: folders.map(f => ({ folder: f.uri })),
+							filePattern: query,
+							maxResults
+						}, CancellationToken.None);
+
+						return {
+							type: 'filename',
+							query,
+							results: results.results.map(r => r.resource.fsPath),
+							count: results.results.length
+						};
+					} else {
+						const results = await this._searchService.textSearch({
+							type: QueryType.Text,
+							contentPattern: { pattern: query },
+							folderQueries: folders.map(f => ({ folder: f.uri })),
+							includePattern: filePattern ? { [filePattern]: true } : undefined,
+							maxResults
+						}, CancellationToken.None);
+
+						return {
+							type: 'content',
+							query,
+							results: results.results.map(r => ({
+								file: r.resource.fsPath,
+								matches: r.results?.length || 0
+							})),
+							count: results.results.length
+						};
+					}
+				} catch (error) {
+					return { error: `Search failed: ${error instanceof Error ? error.message : String(error)}` };
+				}
 			}
 		);
 
-		// Terminal tool
+		// List Directory Tool
 		this.registerTool(
 			{
-				name: 'run_terminal_command',
-				description: 'Execute a command in the terminal',
+				name: 'list_directory',
+				description: 'List files and folders in a directory. Useful for understanding project structure.',
 				parameters: {
 					type: 'object',
 					properties: {
-						command: { type: 'string', description: 'The command to execute' }
+						path: { type: 'string', description: 'The directory path (defaults to workspace root)' },
+						recursive: { type: 'boolean', description: 'Include subdirectories (default false)' },
+						max_depth: { type: 'number', description: 'Maximum depth for recursive listing (default 3)' }
+					}
+				}
+			},
+			async (args) => {
+				try {
+					const path = args.path as string | undefined;
+					const recursive = args.recursive as boolean || false;
+					const maxDepth = (args.max_depth as number) || 3;
+
+					const folders = this._workspaceContextService.getWorkspace().folders;
+					const uri = path ? this._resolveUri(path) : folders[0]?.uri;
+
+					if (!uri) {
+						return { error: 'No path specified and no workspace folder open' };
+					}
+
+					const entries = await this._listDirectoryRecursive(uri, recursive, maxDepth, 0);
+
+					return {
+						path: uri.fsPath,
+						entries,
+						totalItems: entries.length
+					};
+				} catch (error) {
+					return { error: `Failed to list directory: ${error instanceof Error ? error.message : String(error)}` };
+				}
+			}
+		);
+
+		// Run Terminal Command Tool
+		this.registerTool(
+			{
+				name: 'run_terminal_command',
+				description: 'Execute a shell command in the integrated terminal. Use for running build scripts, tests, git commands, etc.',
+				parameters: {
+					type: 'object',
+					properties: {
+						command: { type: 'string', description: 'The command to execute' },
+						cwd: { type: 'string', description: 'Working directory for the command (optional)' }
 					},
 					required: ['command']
 				}
 			},
 			async (args) => {
-				return `Terminal tool called with command: ${args.command}`;
+				try {
+					const command = args.command as string;
+					if (!command) {
+						return { error: 'Command is required' };
+					}
+
+					// Security check for dangerous commands
+					const dangerousPatterns = [
+						/rm\s+-rf\s+[\/~]/i,
+						/>\s*\/dev\//i,
+						/mkfs/i,
+						/dd\s+if=/i,
+						/:(){ :|:& };:/
+					];
+
+					for (const pattern of dangerousPatterns) {
+						if (pattern.test(command)) {
+							return { error: 'Command blocked for safety. This could cause system damage.', blocked: true };
+						}
+					}
+
+					// Try to get terminal service
+					const terminalService = this._instantiationService.invokeFunction((accessor) => {
+						try {
+							return accessor.get(ITerminalService);
+						} catch {
+							return undefined;
+						}
+					});
+
+					if (!terminalService) {
+						return {
+							success: false,
+							command,
+							message: 'Terminal service not available. Command would be: ' + command
+						};
+					}
+
+					let terminal = terminalService.activeInstance;
+					if (!terminal) {
+						terminal = await terminalService.createTerminal({
+							config: { name: 'AIDE Agent' }
+						});
+					}
+
+					terminalService.setActiveInstance(terminal);
+					await terminalService.revealActiveTerminal();
+					terminal.sendText(command, true);
+
+					this._logService.info(`[AIDE] Executed command: ${command}`);
+
+					return {
+						success: true,
+						command,
+						message: 'Command sent to terminal. Check terminal for output.'
+					};
+				} catch (error) {
+					return { error: `Command failed: ${error instanceof Error ? error.message : String(error)}` };
+				}
 			}
 		);
+	}
+
+	private _resolveUri(path: string): URI {
+		if (path.startsWith('/') || path.includes(':')) {
+			return URI.file(path);
+		}
+
+		const folders = this._workspaceContextService.getWorkspace().folders;
+		if (folders.length > 0) {
+			return URI.joinPath(folders[0].uri, path);
+		}
+
+		return URI.file(path);
+	}
+
+	private async _listDirectoryRecursive(
+		uri: URI,
+		recursive: boolean,
+		maxDepth: number,
+		currentDepth: number
+	): Promise<Array<{ name: string; type: string; path: string }>> {
+		const entries: Array<{ name: string; type: string; path: string }> = [];
+
+		try {
+			const resolved = await this._fileService.resolve(uri);
+			if (resolved.children) {
+				for (const child of resolved.children) {
+					entries.push({
+						name: child.name,
+						type: child.isDirectory ? 'directory' : 'file',
+						path: child.resource.fsPath
+					});
+
+					if (recursive && child.isDirectory && currentDepth < maxDepth) {
+						const subEntries = await this._listDirectoryRecursive(child.resource, recursive, maxDepth, currentDepth + 1);
+						entries.push(...subEntries);
+					}
+				}
+			}
+		} catch { /* ignore */ }
+
+		return entries;
 	}
 
 	private _loadAgents(): void {

@@ -1,115 +1,305 @@
 /*---------------------------------------------------------------------------------------------
- *  Copyright (c) Microsoft Corporation. All rights reserved.
- *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *  AIDE - AI Development Environment
+ *  BATCOMPUTER EDITION - Dark. Sleek. Powerful.
  *--------------------------------------------------------------------------------------------*/
 
 /* ============================================================================
- * Composer Widget
- * ============================================================================ */
+   CSS Variables - The Dark Knight Palette
+   ============================================================================ */
+
+.aide-composer-container,
+.aide-composer {
+	--bat-void: #000000;
+	--bat-black: #0a0a0f;
+	--bat-dark: #0d1117;
+	--bat-surface: #13161d;
+	--bat-elevated: #1a1f2a;
+	--bat-border: #232830;
+	--bat-hover: #2a303a;
+
+	--bat-text: #e4e8f0;
+	--bat-text-secondary: #8b9ab0;
+	--bat-text-muted: #5a6578;
+
+	--bat-blue: #00d4ff;
+	--bat-blue-dim: rgba(0, 212, 255, 0.15);
+	--bat-blue-glow: rgba(0, 212, 255, 0.5);
+	--bat-purple: #a855f7;
+	--bat-purple-dim: rgba(168, 85, 247, 0.15);
+	--bat-cyan: #22d3ee;
+	--bat-green: #10b981;
+	--bat-amber: #f59e0b;
+	--bat-red: #ef4444;
+
+	--bat-gradient: linear-gradient(135deg, var(--bat-blue) 0%, var(--bat-purple) 100%);
+	--bat-gradient-subtle: linear-gradient(180deg, rgba(0, 212, 255, 0.08) 0%, transparent 100%);
+	--bat-glow: 0 0 30px var(--bat-blue-glow), 0 0 60px rgba(0, 212, 255, 0.2);
+	--bat-glow-sm: 0 0 15px var(--bat-blue-glow);
+
+	--bat-radius: 8px;
+	--bat-radius-lg: 12px;
+	--bat-transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ============================================================================
+   Composer Container - The Batcave
+   ============================================================================ */
+
+.aide-composer-container {
+	background: var(--bat-black);
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	position: relative;
+}
+
+/* Subtle scan line effect */
+.aide-composer-container::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: repeating-linear-gradient(
+		0deg,
+		transparent,
+		transparent 2px,
+		rgba(0, 212, 255, 0.01) 2px,
+		rgba(0, 212, 255, 0.01) 4px
+	);
+	pointer-events: none;
+	z-index: 1000;
+	opacity: 0.3;
+}
 
 .aide-composer {
 	display: flex;
 	flex-direction: column;
 	height: 100%;
-	background-color: var(--vscode-editor-background);
-	color: var(--vscode-editor-foreground);
+	background: linear-gradient(180deg, var(--bat-black) 0%, var(--bat-dark) 100%);
+	color: var(--bat-text);
+	font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+	position: relative;
 }
+
+/* ============================================================================
+   Header - Command Center
+   ============================================================================ */
 
 .aide-composer-header {
 	display: flex;
-	align-items: center;
-	gap: 16px;
-	padding: 8px 12px;
-	border-bottom: 1px solid var(--vscode-panel-border);
-	background-color: var(--vscode-sideBar-background);
+	flex-direction: column;
+	gap: 12px;
+	padding: 16px;
+	background: linear-gradient(180deg, var(--bat-surface) 0%, var(--bat-dark) 100%);
+	border-bottom: 1px solid var(--bat-border);
+	position: relative;
+}
+
+/* Glowing top border */
+.aide-composer-header::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 1px;
+	background: var(--bat-gradient);
+	opacity: 0.6;
 }
 
 .aide-composer-mode,
 .aide-composer-model {
 	display: flex;
-	align-items: center;
-	gap: 8px;
+	flex-direction: column;
+	gap: 6px;
 }
 
 .aide-composer-mode .label,
 .aide-composer-model .label {
-	font-size: 12px;
-	color: var(--vscode-descriptionForeground);
+	font-size: 10px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 1.5px;
+	color: var(--bat-blue);
+	text-shadow: 0 0 10px var(--bat-blue-glow);
+}
+
+.aide-composer-header .monaco-select-box {
+	background: var(--bat-elevated) !important;
+	border: 1px solid var(--bat-border) !important;
+	border-radius: var(--bat-radius) !important;
+	color: var(--bat-text) !important;
+	font-size: 13px;
+	font-weight: 500;
+	padding: 8px 12px;
+	transition: all var(--bat-transition);
+}
+
+.aide-composer-header .monaco-select-box:hover {
+	border-color: var(--bat-blue) !important;
+	box-shadow: var(--bat-glow-sm);
+}
+
+.aide-composer-header .monaco-select-box:focus {
+	border-color: var(--bat-blue) !important;
+	outline: none;
+	box-shadow: var(--bat-glow);
 }
 
 /* ============================================================================
- * Messages List
- * ============================================================================ */
+   Messages List - The Feed
+   ============================================================================ */
 
 .aide-composer-messages {
 	flex: 1;
 	overflow-y: auto;
-	padding: 12px;
-}
-
-.aide-message {
-	margin-bottom: 16px;
-	padding: 12px;
-	border-radius: 8px;
-}
-
-.aide-message-user {
-	background-color: var(--vscode-input-background);
-	margin-left: 24px;
-}
-
-.aide-message-assistant {
-	background-color: var(--vscode-editor-inactiveSelectionBackground);
-	margin-right: 24px;
-}
-
-.aide-message-system {
-	background-color: var(--vscode-editorWidget-background);
-	font-style: italic;
-	opacity: 0.8;
-}
-
-.aide-message-role {
-	font-size: 11px;
-	font-weight: 600;
-	text-transform: uppercase;
-	letter-spacing: 0.5px;
-	color: var(--vscode-descriptionForeground);
-	margin-bottom: 4px;
-}
-
-.aide-message-content {
-	font-size: 13px;
-	line-height: 1.5;
-	white-space: pre-wrap;
-	word-break: break-word;
-}
-
-.aide-message-content.streaming::after {
-	content: '▋';
-	animation: blink 1s step-end infinite;
-}
-
-@keyframes blink {
-	50% { opacity: 0; }
-}
-
-.aide-message-attachments {
+	overflow-x: hidden;
+	padding: 20px;
 	display: flex;
-	flex-wrap: wrap;
-	gap: 6px;
-	margin-top: 8px;
+	flex-direction: column;
+	gap: 20px;
+	scroll-behavior: smooth;
+	background: var(--bat-gradient-subtle);
+}
+
+.aide-composer-messages::-webkit-scrollbar {
+	width: 6px;
+}
+
+.aide-composer-messages::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+.aide-composer-messages::-webkit-scrollbar-thumb {
+	background: var(--bat-border);
+	border-radius: 3px;
+}
+
+.aide-composer-messages::-webkit-scrollbar-thumb:hover {
+	background: var(--bat-blue);
+	box-shadow: var(--bat-glow-sm);
 }
 
 /* ============================================================================
- * Attachments
- * ============================================================================ */
+   Message Bubbles - Intel Reports
+   ============================================================================ */
 
-.aide-composer-attachments {
+.aide-message {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	padding: 16px 20px;
+	border-radius: var(--bat-radius-lg);
+	animation: messageReveal 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+	position: relative;
+}
+
+@keyframes messageReveal {
+	from {
+		opacity: 0;
+		transform: translateY(20px) scale(0.98);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+	}
+}
+
+/* User Messages */
+.aide-message-user {
+	background: var(--bat-elevated);
+	border: 1px solid var(--bat-border);
+	margin-left: 20px;
+}
+
+/* Assistant Messages - The AI Response */
+.aide-message-assistant {
+	background: linear-gradient(135deg, var(--bat-blue-dim) 0%, var(--bat-purple-dim) 100%);
+	border: 1px solid rgba(0, 212, 255, 0.2);
+	margin-right: 20px;
+	position: relative;
+	overflow: hidden;
+}
+
+/* Glowing accent line */
+.aide-message-assistant::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 3px;
+	height: 100%;
+	background: var(--bat-gradient);
+	box-shadow: var(--bat-glow-sm);
+}
+
+/* System Messages */
+.aide-message-system {
+	background: rgba(245, 158, 11, 0.1);
+	border: 1px solid rgba(245, 158, 11, 0.3);
+	font-size: 12px;
+	padding: 12px 16px;
+}
+
+.aide-message-role {
+	font-size: 10px;
+	font-weight: 800;
+	text-transform: uppercase;
+	letter-spacing: 1.5px;
+}
+
+.aide-message-user .aide-message-role {
+	color: var(--bat-text-secondary);
+}
+
+.aide-message-assistant .aide-message-role {
+	color: var(--bat-blue);
+	text-shadow: 0 0 10px var(--bat-blue-glow);
+}
+
+.aide-message-system .aide-message-role {
+	color: var(--bat-amber);
+}
+
+.aide-message-content {
+	font-size: 14px;
+	line-height: 1.7;
+	color: var(--bat-text);
+	word-wrap: break-word;
+	white-space: pre-wrap;
+}
+
+/* Streaming Animation - The Batcomputer is thinking */
+.aide-message-content.streaming::after {
+	content: '';
+	display: inline-block;
+	width: 3px;
+	height: 18px;
+	background: var(--bat-blue);
+	margin-left: 4px;
+	animation: batCursor 0.8s infinite;
+	box-shadow: var(--bat-glow-sm);
+	border-radius: 1px;
+}
+
+@keyframes batCursor {
+	0%, 50% { opacity: 1; }
+	51%, 100% { opacity: 0; }
+}
+
+/* ============================================================================
+   Attachments - Evidence Files
+   ============================================================================ */
+
+.aide-composer-attachments,
+.aide-message-attachments {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 6px;
-	padding: 8px 12px;
+	gap: 8px;
+}
+
+.aide-composer-attachments {
+	padding: 0 16px 12px;
 	min-height: 0;
 }
 
@@ -120,244 +310,678 @@
 .aide-attachment-chip {
 	display: inline-flex;
 	align-items: center;
-	gap: 4px;
-	padding: 4px 8px;
-	background-color: var(--vscode-badge-background);
-	color: var(--vscode-badge-foreground);
-	border-radius: 12px;
-	font-size: 11px;
-	max-width: 200px;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
+	gap: 8px;
+	padding: 6px 12px;
+	background: var(--bat-elevated);
+	border: 1px solid var(--bat-border);
+	border-radius: 20px;
+	font-size: 12px;
+	font-weight: 500;
+	color: var(--bat-text-secondary);
+	transition: all var(--bat-transition);
+}
+
+.aide-attachment-chip:hover {
+	background: var(--bat-hover);
+	border-color: var(--bat-blue);
+	color: var(--bat-blue);
+	box-shadow: var(--bat-glow-sm);
 }
 
 .aide-attachment-chip .remove {
 	cursor: pointer;
-	opacity: 0.7;
-	margin-left: 2px;
+	opacity: 0.5;
+	font-size: 14px;
+	transition: all var(--bat-transition);
 }
 
 .aide-attachment-chip .remove:hover {
 	opacity: 1;
+	color: var(--bat-red);
 }
 
 /* ============================================================================
- * Input Area
- * ============================================================================ */
+   Input Area - The Command Line
+   ============================================================================ */
 
 .aide-composer-input {
 	display: flex;
 	flex-direction: column;
-	padding: 12px;
-	border-top: 1px solid var(--vscode-panel-border);
-	background-color: var(--vscode-sideBar-background);
+	gap: 12px;
+	padding: 16px;
+	background: linear-gradient(180deg, var(--bat-dark) 0%, var(--bat-surface) 100%);
+	border-top: 1px solid var(--bat-border);
+	position: relative;
+}
+
+/* Glow line at top */
+.aide-composer-input::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 16px;
+	right: 16px;
+	height: 1px;
+	background: linear-gradient(90deg, transparent, var(--bat-blue), transparent);
+	opacity: 0.3;
 }
 
 .aide-input-buttons {
 	display: flex;
-	gap: 4px;
-	margin-bottom: 8px;
+	gap: 8px;
 }
 
 .aide-button {
-	padding: 4px 8px;
-	background-color: var(--vscode-button-secondaryBackground);
-	color: var(--vscode-button-secondaryForeground);
-	border: none;
-	border-radius: 4px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 36px;
+	height: 36px;
+	padding: 0;
+	background: var(--bat-elevated);
+	border: 1px solid var(--bat-border);
+	border-radius: var(--bat-radius);
+	color: var(--bat-text-secondary);
+	font-size: 15px;
 	cursor: pointer;
-	font-size: 12px;
+	transition: all var(--bat-transition);
 }
 
 .aide-button:hover {
-	background-color: var(--vscode-button-secondaryHoverBackground);
+	background: var(--bat-hover);
+	border-color: var(--bat-blue);
+	color: var(--bat-blue);
+	transform: translateY(-2px);
+	box-shadow: var(--bat-glow-sm);
+}
+
+.aide-button:active {
+	transform: translateY(0);
 }
 
 .aide-input-wrapper {
 	display: flex;
-	gap: 8px;
 	align-items: flex-end;
+	gap: 12px;
+	background: var(--bat-elevated);
+	border: 1px solid var(--bat-border);
+	border-radius: var(--bat-radius-lg);
+	padding: 12px 16px;
+	transition: all var(--bat-transition);
+}
+
+.aide-input-wrapper:focus-within {
+	border-color: var(--bat-blue);
+	box-shadow: var(--bat-glow), inset 0 0 30px rgba(0, 212, 255, 0.05);
 }
 
 .aide-input-wrapper .monaco-inputbox {
 	flex: 1;
+	background: transparent !important;
+	border: none !important;
 }
 
+.aide-input-wrapper .monaco-inputbox .input,
+.aide-input-wrapper .monaco-inputbox .mirror {
+	background: transparent !important;
+	color: var(--bat-text) !important;
+	font-size: 14px;
+	padding: 4px 0;
+	line-height: 1.5;
+}
+
+.aide-input-wrapper .monaco-inputbox .input::placeholder {
+	color: var(--bat-text-muted);
+	font-style: italic;
+}
+
+/* Send Button - Execute */
 .aide-send-button {
-	padding: 8px 16px !important;
-	background-color: var(--vscode-button-background) !important;
-	color: var(--vscode-button-foreground) !important;
-	border: none !important;
-	border-radius: 4px !important;
-	cursor: pointer !important;
-	font-size: 13px !important;
-}
-
-.aide-send-button:hover {
-	background-color: var(--vscode-button-hoverBackground) !important;
-}
-
-/* ============================================================================
- * Agent Sidebar
- * ============================================================================ */
-
-.aide-agent-sidebar {
-	display: flex;
-	flex-direction: column;
-	height: 100%;
-	background-color: var(--vscode-sideBar-background);
-	color: var(--vscode-sideBar-foreground);
-}
-
-.aide-agent-search {
-	padding: 8px 12px;
-	border-bottom: 1px solid var(--vscode-panel-border);
-}
-
-.aide-agent-new {
-	padding: 8px 12px;
-}
-
-.aide-new-agent-button {
-	width: 100%;
-	padding: 8px 16px !important;
-	background-color: var(--vscode-button-background) !important;
-	color: var(--vscode-button-foreground) !important;
-	border: none !important;
-	border-radius: 4px !important;
-	cursor: pointer !important;
-	font-size: 13px !important;
-	text-align: center !important;
-}
-
-.aide-new-agent-button:hover {
-	background-color: var(--vscode-button-hoverBackground) !important;
-}
-
-.aide-agent-list-header {
-	padding: 8px 12px;
-	font-size: 11px;
-	font-weight: 600;
-	text-transform: uppercase;
-	letter-spacing: 0.5px;
-	color: var(--vscode-sideBarSectionHeader-foreground);
-	background-color: var(--vscode-sideBarSectionHeader-background);
-}
-
-.aide-agent-list {
-	flex: 1;
-	overflow-y: auto;
-}
-
-.aide-agent-item {
-	display: flex;
-	align-items: center;
-	gap: 10px;
-	padding: 10px 12px;
-	cursor: pointer;
-	border-bottom: 1px solid var(--vscode-list-hoverBackground);
-}
-
-.aide-agent-item:hover {
-	background-color: var(--vscode-list-hoverBackground);
-}
-
-.aide-agent-item.active {
-	background-color: var(--vscode-list-activeSelectionBackground);
-	color: var(--vscode-list-activeSelectionForeground);
-}
-
-.aide-agent-icon {
-	width: 24px;
-	height: 24px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	font-size: 14px;
-	background-color: var(--vscode-badge-background);
-	color: var(--vscode-badge-foreground);
-	border-radius: 50%;
+	padding: 10px 24px !important;
+	background: var(--bat-gradient) !important;
+	border: none !important;
+	border-radius: var(--bat-radius) !important;
+	color: var(--bat-black) !important;
+	font-size: 12px !important;
+	font-weight: 700 !important;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+	cursor: pointer;
+	transition: all var(--bat-transition);
+	position: relative;
+	overflow: hidden;
 }
 
-.aide-agent-details {
+.aide-send-button::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+	transform: translateX(-100%);
+	transition: transform 0.5s;
+}
+
+.aide-send-button:hover {
+	transform: translateY(-2px);
+	box-shadow: var(--bat-glow);
+}
+
+.aide-send-button:hover::before {
+	transform: translateX(100%);
+}
+
+.aide-send-button:active {
+	transform: translateY(0);
+}
+
+/* ============================================================================
+   Empty State - Awaiting Orders
+   ============================================================================ */
+
+.aide-empty-state {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
 	flex: 1;
-	min-width: 0;
+	padding: 48px 24px;
+	text-align: center;
 }
 
-.aide-agent-name {
+.aide-empty-state-icon {
+	font-size: 64px;
+	margin-bottom: 24px;
+	opacity: 0.2;
+	filter: drop-shadow(0 0 20px var(--bat-blue));
+}
+
+.aide-empty-state-title {
+	font-size: 20px;
+	font-weight: 700;
+	color: var(--bat-text);
+	margin-bottom: 8px;
+	text-transform: uppercase;
+	letter-spacing: 2px;
+}
+
+.aide-empty-state-description {
+	font-size: 14px;
+	color: var(--bat-text-muted);
+	max-width: 280px;
+	line-height: 1.6;
+}
+
+/* ============================================================================
+   Code Blocks - Technical Readouts
+   ============================================================================ */
+
+.aide-message-content pre {
+	background: var(--bat-void);
+	border: 1px solid var(--bat-border);
+	border-radius: var(--bat-radius);
+	padding: 16px;
+	margin: 12px 0;
+	overflow-x: auto;
+	position: relative;
+}
+
+.aide-message-content pre::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 1px;
+	background: var(--bat-gradient);
+	opacity: 0.5;
+}
+
+.aide-message-content code {
+	font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', Consolas, monospace;
+	font-size: 13px;
+}
+
+.aide-message-content :not(pre) > code {
+	background: var(--bat-elevated);
+	padding: 2px 8px;
+	border-radius: 4px;
+	font-size: 0.9em;
+	color: var(--bat-cyan);
+}
+
+/* ============================================================================
+   Tool Calls - Mission Operations
+   ============================================================================ */
+
+.aide-tool-call {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 10px 14px;
+	background: rgba(16, 185, 129, 0.1);
+	border: 1px solid rgba(16, 185, 129, 0.3);
+	border-left: 3px solid var(--bat-green);
+	border-radius: var(--bat-radius);
+	margin: 10px 0;
+	font-size: 12px;
+	font-family: 'JetBrains Mono', monospace;
+}
+
+.aide-tool-call-icon {
+	color: var(--bat-green);
+	text-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+}
+
+.aide-tool-call-name {
+	font-weight: 700;
+	color: var(--bat-green);
+}
+
+.aide-tool-call-args {
+	color: var(--bat-text-secondary);
+}
+
+/* ============================================================================
+   Thinking State - Processing
+   ============================================================================ */
+
+.aide-thinking {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 16px 20px;
+	color: var(--bat-text-secondary);
 	font-size: 13px;
 	font-weight: 500;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
+	text-transform: uppercase;
+	letter-spacing: 1px;
 }
 
-.aide-agent-time {
-	font-size: 11px;
-	color: var(--vscode-descriptionForeground);
-}
-
-/* ============================================================================
- * Ghost Text (Tab Completion)
- * ============================================================================ */
-
-.aide-ghost-text {
-	color: var(--vscode-editorGhostText-foreground);
-	font-style: italic;
-	opacity: 0.6;
-}
-
-/* ============================================================================
- * Inline Edit Widget
- * ============================================================================ */
-
-.aide-inline-edit {
-	background-color: var(--vscode-editorWidget-background);
-	border: 1px solid var(--vscode-editorWidget-border);
-	border-radius: 4px;
-	box-shadow: 0 2px 8px var(--vscode-widget-shadow);
-	padding: 8px;
-	max-width: 500px;
-}
-
-.aide-inline-edit-input {
-	margin-bottom: 8px;
-}
-
-.aide-inline-edit-actions {
+.aide-thinking-dots {
 	display: flex;
-	justify-content: flex-end;
-	gap: 8px;
+	gap: 6px;
+}
+
+.aide-thinking-dots span {
+	width: 8px;
+	height: 8px;
+	background: var(--bat-blue);
+	border-radius: 50%;
+	animation: batPulse 1.4s infinite ease-in-out both;
+	box-shadow: 0 0 10px var(--bat-blue-glow);
+}
+
+.aide-thinking-dots span:nth-child(1) { animation-delay: 0s; }
+.aide-thinking-dots span:nth-child(2) { animation-delay: 0.2s; }
+.aide-thinking-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes batPulse {
+	0%, 80%, 100% {
+		transform: scale(0.6);
+		opacity: 0.4;
+	}
+	40% {
+		transform: scale(1.2);
+		opacity: 1;
+		box-shadow: 0 0 20px var(--bat-blue-glow);
+	}
 }
 
 /* ============================================================================
- * Diff Preview
- * ============================================================================ */
+   Diff Preview - Change Detection
+   ============================================================================ */
 
 .aide-diff-preview {
-	margin: 8px 0;
-	border-radius: 4px;
+	margin: 12px 0;
+	border-radius: var(--bat-radius);
 	overflow: hidden;
-	font-family: var(--vscode-editor-font-family);
-	font-size: var(--vscode-editor-font-size);
+	border: 1px solid var(--bat-border);
+	font-family: 'JetBrains Mono', monospace;
+	font-size: 12px;
 }
 
 .aide-diff-line {
-	padding: 2px 8px;
+	padding: 4px 12px;
 	white-space: pre;
 }
 
 .aide-diff-line.added {
-	background-color: var(--vscode-diffEditor-insertedTextBackground);
+	background: rgba(16, 185, 129, 0.15);
+	border-left: 3px solid var(--bat-green);
+	color: var(--bat-green);
 }
 
 .aide-diff-line.removed {
-	background-color: var(--vscode-diffEditor-removedTextBackground);
+	background: rgba(239, 68, 68, 0.15);
+	border-left: 3px solid var(--bat-red);
+	color: var(--bat-red);
 	text-decoration: line-through;
-	opacity: 0.7;
 }
 
 .aide-diff-line.unchanged {
-	opacity: 0.6;
+	color: var(--bat-text-muted);
+}
+
+/* ============================================================================
+   Mode Indicator Badges
+   ============================================================================ */
+
+.aide-mode-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 4px 10px;
+	border-radius: 12px;
+	font-size: 10px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+}
+
+.aide-mode-badge.agent {
+	background: var(--bat-blue-dim);
+	color: var(--bat-blue);
+	border: 1px solid rgba(0, 212, 255, 0.3);
+}
+
+.aide-mode-badge.plan {
+	background: var(--bat-purple-dim);
+	color: var(--bat-purple);
+	border: 1px solid rgba(168, 85, 247, 0.3);
+}
+
+/* ============================================================================
+   Status Indicators
+   ============================================================================ */
+
+.aide-status {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 8px 12px;
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+}
+
+.aide-status-dot {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	animation: statusPulse 2s infinite;
+}
+
+.aide-status-dot.active {
+	background: var(--bat-green);
+	box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+}
+
+.aide-status-dot.processing {
+	background: var(--bat-blue);
+	box-shadow: 0 0 10px var(--bat-blue-glow);
+}
+
+.aide-status-dot.error {
+	background: var(--bat-red);
+	box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+}
+
+@keyframes statusPulse {
+	0%, 100% { opacity: 1; }
+	50% { opacity: 0.5; }
+}
+
+/* ============================================================================
+   View Container Overrides
+   ============================================================================ */
+
+.auxiliary-bar .aide-composer-container,
+.pane-body .aide-composer-container {
+	height: 100%;
+}
+
+/* Override Monaco defaults in our container */
+.aide-composer .monaco-select-box-dropdown-padding {
+	background: var(--bat-elevated) !important;
+}
+
+/* ============================================================================
+   Header Title Section
+   ============================================================================ */
+
+.aide-header-title {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding-bottom: 12px;
+	border-bottom: 1px solid var(--bat-border);
+	margin-bottom: 12px;
+}
+
+.aide-header-title h2 {
+	font-size: 16px;
+	font-weight: 800;
+	color: var(--bat-text);
+	margin: 0;
+	letter-spacing: 2px;
+	text-transform: uppercase;
+}
+
+.aide-logo {
+	color: var(--bat-blue);
+	text-shadow: 0 0 15px var(--bat-blue-glow);
+	animation: logoPulse 3s infinite;
+}
+
+@keyframes logoPulse {
+	0%, 100% { opacity: 1; }
+	50% { opacity: 0.7; }
+}
+
+.aide-header-controls {
+	display: flex;
+	gap: 16px;
+}
+
+/* ============================================================================
+   @ Mention Dropdown
+   ============================================================================ */
+
+.aide-mention-dropdown {
+	position: absolute;
+	bottom: 120px;
+	left: 16px;
+	right: 16px;
+	max-height: 300px;
+	background: var(--bat-surface);
+	border: 1px solid var(--bat-blue);
+	border-radius: var(--bat-radius-lg);
+	box-shadow: var(--bat-glow), 0 10px 40px rgba(0, 0, 0, 0.5);
+	overflow-y: auto;
+	z-index: 100;
+}
+
+.aide-mention-item {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 12px 16px;
+	cursor: pointer;
+	transition: all var(--bat-transition);
+}
+
+.aide-mention-item:hover,
+.aide-mention-item.selected {
+	background: var(--bat-blue-dim);
+}
+
+.aide-mention-item .icon {
+	font-size: 18px;
+	width: 24px;
+	text-align: center;
+}
+
+.aide-mention-item .label {
+	font-weight: 600;
+	color: var(--bat-blue);
+	font-family: 'JetBrains Mono', monospace;
+}
+
+.aide-mention-item .description {
+	color: var(--bat-text-secondary);
+	font-size: 12px;
+	margin-left: auto;
+}
+
+/* ============================================================================
+   Status Bar
+   ============================================================================ */
+
+.aide-status-bar {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 8px 16px;
+	background: var(--bat-void);
+	border-top: 1px solid var(--bat-border);
+	font-size: 10px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 1.5px;
+	color: var(--bat-text-secondary);
+}
+
+/* ============================================================================
+   Action Buttons (Send/Stop)
+   ============================================================================ */
+
+.aide-action-buttons {
+	display: flex;
+	gap: 8px;
+}
+
+.aide-stop-button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 40px !important;
+	height: 40px !important;
+	padding: 0 !important;
+	background: var(--bat-red) !important;
+	border: none !important;
+	border-radius: var(--bat-radius) !important;
+	color: white !important;
+	font-size: 14px !important;
+	cursor: pointer;
+	transition: all var(--bat-transition);
+}
+
+.aide-stop-button:hover {
+	transform: scale(1.05);
+	box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+}
+
+/* ============================================================================
+   Empty State Enhancements
+   ============================================================================ */
+
+.aide-hints {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 16px;
+	margin-top: 20px;
+}
+
+.aide-hints .hint {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 12px;
+	color: var(--bat-text-secondary);
+}
+
+.aide-hints .key {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 24px;
+	height: 24px;
+	padding: 0 8px;
+	background: var(--bat-elevated);
+	border: 1px solid var(--bat-border);
+	border-radius: 4px;
+	font-family: 'JetBrains Mono', monospace;
+	font-size: 11px;
+	color: var(--bat-blue);
+}
+
+/* ============================================================================
+   Message Header
+   ============================================================================ */
+
+.aide-message-header {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin-bottom: 8px;
+}
+
+.aide-message-timestamp {
+	font-size: 10px;
+	color: var(--bat-text-muted);
+}
+
+.aide-icon {
+	color: var(--bat-blue);
+	text-shadow: 0 0 10px var(--bat-blue-glow);
+}
+
+/* ============================================================================
+   Tool Calls Container
+   ============================================================================ */
+
+.aide-tool-calls {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin-top: 12px;
+}
+
+/* ============================================================================
+   High Contrast Mode
+   ============================================================================ */
+
+.hc-black .aide-composer,
+.hc-black .aide-composer-container {
+	--bat-border: var(--bat-blue);
+}
+
+/* ============================================================================
+   Send Button Enhancement
+   ============================================================================ */
+
+.aide-send-button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 40px !important;
+	height: 40px !important;
+	padding: 0 !important;
+	background: var(--bat-gradient) !important;
+	border: none !important;
+	border-radius: var(--bat-radius) !important;
+	color: var(--bat-black) !important;
+	font-size: 16px !important;
+	cursor: pointer;
+	transition: all var(--bat-transition);
+}
+
+.aide-send-button:hover {
+	transform: scale(1.05);
+	box-shadow: var(--bat-glow);
 }
