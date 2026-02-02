@@ -49,17 +49,19 @@ Connect to multiple AI providers:
 git clone https://github.com/averagejoeslab/vscode-fork.git
 cd vscode-fork
 
-# Install dependencies
+# Install dependencies (use --ignore-scripts for initial setup)
 npm install --ignore-scripts
 cd build && npm install --ignore-scripts && cd ..
 
-# Compile
-npm run compile
+# Compile the client
+npm run gulp compile-client
 
-# Run the application
+# Download Electron and run the application
 ./scripts/code.sh  # Linux/macOS
 ./scripts/code.bat # Windows
 ```
+
+**Note:** This project requires Node.js v22+ which uses `--experimental-strip-types` for TypeScript support. The build scripts are pre-configured to use this flag.
 
 ### Configuration
 
